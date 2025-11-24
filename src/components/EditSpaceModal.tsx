@@ -12,11 +12,11 @@ library.add(
     faVideoCamera, faChild, faDog, faParking, faLock, faBolt
 );
 
-// Modal for editing an existing space listing
+// Modal for editing an existing collectionPoint listing
 const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: string, spaceId: string, onSubmitComplete: (status: number | null) => void }> = ({ isOpen, onClose, userId, spaceId, onSubmitComplete }) => {
     // Loading state for the modal
     const [isLoading, setIsLoading] = useState(false);
-    // Space name for the modal title
+    // CollectionPoint name for the modal title
     const [spaceName, setSpaceName] = useState('');
     // State for image previews
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -95,16 +95,16 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
         }
     }
 
-    // Fetch space data from the server and initialize form fields
+    // Fetch collectionPoint data from the server and initialize form fields
     const fetchData = async () => {
         try {
-            const response = await fetch(`/api/spaces/${spaceId}`);
+            const response = await fetch(`/api/collectionPoints/${spaceId}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch space data');
+                throw new Error('Failed to fetch collectionPoint data');
             }
             const data = await response.json();
             const addressString = data.address.number ? `${data.address.street}, ${data.address.number} - ${data.address.city}, ${data.address.country}` : `${data.address.street} - ${data.address.city}, ${data.address.country}`;
-            setSpaceName(data.name); // Set space name for the modal title
+            setSpaceName(data.name); // Set collectionPoint name for the modal title
             setFormData({
                 name: data.name,
                 address: addressString,
@@ -119,10 +119,10 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
             });
             setUploadedImages(data.images || []);
             setSelectedServices(data.services?.map((s: any) => s.id) || []);
-            console.log('Fetched space data:', data);
+            console.log('Fetched collectionPoint data:', data);
         }
         catch (error) {
-            console.error('Error fetching space data:', error);
+            console.error('Error fetching collectionPoint data:', error);
         }
     }
 
@@ -138,7 +138,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
             }, 10); // Wait a tick to trigger transition
             try {
                 fetchServices(); // Fetch services when the component mounts
-                fetchData(); // Fetch space data
+                fetchData(); // Fetch collectionPoint data
             } catch (error) {
                 console.error('Error fetching services:', error);
             } finally {
@@ -250,13 +250,13 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
             });
 
             // Sends the form data to the server
-            const response = await fetch(`/api/spaces/${spaceId}`, {
+            const response = await fetch(`/api/collectionPoints/${spaceId}`, {
                 method: 'PUT',
                 body: formDataToSend,
             });
 
             if (!response.ok) {
-                throw new Error("Failed to update space");
+                throw new Error("Failed to update collectionPoint");
             }
 
             handleClearFields(); // Clears the form fields after successful submission
@@ -264,7 +264,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
             onClose(); // Closes the modal
         }
         catch (error) {
-            console.error('Error updating space:', error); // Logs any errors during submission
+            console.error('Error updating collectionPoint:', error); // Logs any errors during submission
         }
     };
 
@@ -394,7 +394,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                                         value={formData.name}
                                         onChange={handleInputChange}
                                         className="p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-                                        placeholder="Enter space name" />
+                                        placeholder="Enter collectionPoint name" />
                                 </div>
                                 <div className="w-full flex flex-col relative">
                                     <label className="flex items-center text-sm md:text-base font-medium pl-1 pb-1 text-stone-900">
@@ -415,7 +415,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                                             onFocus={() => setSuggestionsVisible(true)}
                                             onBlur={() => setSuggestionsVisible(false)}
                                             className="w-full p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-                                            placeholder="Enter space address"
+                                            placeholder="Enter collectionPoint address"
                                         />
                                         {isLoadingSuggestions && (
                                             <div className='absolute inset-y-0 right-0 aspect-square h-full flex justify-center items-center text-stone-600'>
@@ -488,10 +488,10 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                                     </div>
                                 </div>
                             </div>
-                            {/* Space Type dropdown */}
+                            {/* CollectionPoint Type dropdown */}
                             <div className="flex flex-col relative">
                                 <label className="flex items-center text-sm md:text-base font-medium pl-1 pb-1 text-stone-900">
-                                    Space type
+                                    CollectionPoint type
                                     {errors.typology && errorDot}
                                 </label>
                                 <div className="relative w-full">
@@ -524,7 +524,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                                         <option value="MEETING_ROOMS">Meeting Room</option>
                                         <option value="PRIVATE_OFFICES">Private Office</option>
                                         <option value="COMMON_AREAS">Common Area</option>
-                                        <option value="OUTDOOR_SPACES">Outdoor Space</option>
+                                        <option value="OUTDOOR_SPACES">Outdoor CollectionPoint</option>
                                     </select>
                                     <span className={`pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-600 transition-transform duration-200 ${isDropdownOpen ? '-scale-y-100' : ''}`}>
                                         <FontAwesomeIcon icon={faChevronDown} />
@@ -542,7 +542,7 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                                     value={formData.description}
                                     onChange={handleInputChange}
                                     className="min-h-fit p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50 resize-none"
-                                    placeholder="Enter space description"
+                                    placeholder="Enter collectionPoint description"
                                     rows={3}
                                 />
                             </div>
@@ -560,10 +560,10 @@ const EditSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: s
                             <p className='whitespace-nowrap text-xl text-start w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Clear fields</p>
                         </button>
 
-                        {/* Update space button */}
+                        {/* Update collectionPoint button */}
                         <button type='submit' className='flex justify-end items-center rounded-md ring-2 ring-west-side-500 bg-stone-100 hover:bg-west-side-500 active:bg-west-side-500 text-west-side-500 hover:text-stone-100 active:text-stone-100 shadow-sm transition-all duration-150 overflow-hidden
                                             w-10 hover:w-43 active:w-43 ease-out active:scale-90 hover:scale-110 origin-right group'>
-                            <p className='whitespace-nowrap text-xl text-end w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Update space</p>
+                            <p className='whitespace-nowrap text-xl text-end w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Update collectionPoint</p>
                             <div className='aspect-square bg-stone-100 group-hover:bg-west-side-500 group-active:bg-west-side-500 size-10 text-2xl rounded-md flex items-center justify-center duration-150'>
                                 <FontAwesomeIcon icon={faPlus} />
                             </div>

@@ -20,7 +20,7 @@ const vatNumber = string().regex(
   "VAT must be in the format AA12345678910"
 );
 
-// Sign in schema for both clients and agencies
+// Sign in schema for both users and operators
 export const signInSchema = object({
   email,
   password,

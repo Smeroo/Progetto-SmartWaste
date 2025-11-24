@@ -15,8 +15,8 @@ export const config = {
 // Define the upload path for images
 const uploadPath = path.join(process.cwd(), 'public', 'uploads');
 
-// Handles GET requests to /api/spaces
-// Returns all spaces
+// Handles GET requests to /api/collectionPoints
+// Returns all collectionPoints
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -66,8 +66,8 @@ export async function GET(request: NextRequest) {
             ];
         }
 
-        // Fetch spaces from the database
-        const data = await prisma.space.findMany({
+        // Fetch collectionPoints from the database
+        const data = await prisma.collectionPoint.findMany({
             where,
             select: {
                 id: true,
@@ -92,21 +92,21 @@ export async function GET(request: NextRequest) {
         });
 
         // Ensure only the first image is included in the images array
-        const spaces = data.map(space => ({
-            ...space,
-            images: space.images && Array.isArray(space.images) && space.images.length > 0
-                ? [space.images[0]]  // Take only the first element
+        const collectionPoints = data.map(collectionPoint => ({
+            ...collectionPoint,
+            images: collectionPoint.images && Array.isArray(collectionPoint.images) && collectionPoint.images.length > 0
+                ? [collectionPoint.images[0]]  // Take only the first element
                 : []  // Or an empty array if no images exist
         }));
 
-        return NextResponse.json(spaces);
+        return NextResponse.json(collectionPoints);
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch spaces' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch collectionPoints' }, { status: 500 });
     }
 }
 
-// Handles POST requests to /api/spaces
-// Creates a new space
+// Handles POST requests to /api/collectionPoints
+// Creates a new collectionPoint
 export async function POST(request: Request) {
     try {
         // Check if user is authenticated
@@ -130,8 +130,8 @@ export async function POST(request: Request) {
         // Handle address
         const nominatimAddress = metadata.fullAddress;
 
-        // Create a new space in the database
-        const newSpace = await prisma.space.create({
+        // Create a new collectionPoint in the database
+        const newSpace = await prisma.collectionPoint.create({
             data: {
                 name: metadata.name,
                 description: metadata.description,
@@ -157,7 +157,7 @@ export async function POST(request: Request) {
                         connect: metadata.services.map((serviceId: string) => ({ id: parseInt(serviceId) })),
                     }
                     : undefined,
-                agency: {
+                operator: {
                     connect: {
                         userId: metadata.userId,
                     }
@@ -169,7 +169,7 @@ export async function POST(request: Request) {
 
         // If files are provided, save them to the upload path
         if (files && files.length > 0) {
-            const spaceFolder = `space${newSpace.id}`;
+            const spaceFolder = `collectionPoint${newSpace.id}`;
             const spaceFolderPath = path.join(uploadPath, spaceFolder);
 
             // Create the folder if it doesn't exist
@@ -186,8 +186,8 @@ export async function POST(request: Request) {
             savedImagePaths.push(`/uploads/${spaceFolder}/${fileName}`);
             }
 
-            // Update the space with the saved image paths
-            await prisma.space.update({
+            // Update the collectionPoint with the saved image paths
+            await prisma.collectionPoint.update({
             where: { id: newSpace.id },
             data: {
                 images: savedImagePaths,
@@ -197,7 +197,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(newSpace, { status: 201 });
     } catch (error) {
-        console.error('Error creating space:', error);
-        return NextResponse.json({ error: 'Failed to create space' + error }, { status: 500 });
+        console.error('Error creating collectionPoint:', error);
+        return NextResponse.json({ error: 'Failed to create collectionPoint' + error }, { status: 500 });
     }
 }

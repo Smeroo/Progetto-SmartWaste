@@ -109,7 +109,7 @@ export default function AgencyForm({
               required
               pattern="[A-Za-z\s]+"
               className="p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-              placeholder="Enter agency name"
+              placeholder="Enter operator name"
             />
           </div>
         )}
@@ -150,7 +150,7 @@ export default function AgencyForm({
               name="email"
               required
               className="p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-              placeholder="Enter agency email"
+              placeholder="Enter operator email"
             />
           </div>
         )}
@@ -168,7 +168,7 @@ export default function AgencyForm({
                 name="password"
                 required
                 className="w-full p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-                placeholder="Enter agency password"
+                placeholder="Enter operator password"
               />
               {/* Button to toggle password visibility */}
               <button
@@ -199,7 +199,7 @@ export default function AgencyForm({
             required
             pattern="[0-9\s]+"
             className="p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-            placeholder="Enter agency telephone number"
+            placeholder="Enter operator telephone number"
           />
         </div>
       )}

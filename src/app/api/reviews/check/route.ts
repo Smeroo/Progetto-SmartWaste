@@ -4,14 +4,14 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 
 // Handles GET requests to /api/reviews/check?spaceId
-// Checks if a user has already reviewed a space and eventually return the review
+// Checks if a user has already reviewed a collectionPoint and eventually return the review
 export async function GET(request: NextRequest) {
     try {
         const url = new URL(request.url);
         const spaceId = parseInt(url.searchParams.get('spaceId') || '');
 
         if (isNaN(spaceId)) {
-            return NextResponse.json({ error: 'Invalid Space ID' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid CollectionPoint ID' }, { status: 400 });
         }
         // Check if user is authenticated
         const session = await auth();
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "User not authorized" }, { status: 403 });
         }
 
-        // Check if the user has already reviewed the space and return the review if it exists
+        // Check if the user has already reviewed the collectionPoint and return the review if it exists
         const review = await prisma.review.findFirst({
             where: {
                 spaceId: spaceId,

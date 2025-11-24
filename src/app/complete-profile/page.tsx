@@ -51,7 +51,7 @@ export default function CompleteProfile() {
                   icon={faUser}
                   className="text-stone-100 text-lg mr-2 translate-y-[200%] group-hover:translate-y-0 transition duration-150 group-hover:duration-500"
                 />
-                Client
+                User
                 <FontAwesomeIcon
                   icon={faUser}
                   className="text-lg ml-2 opacity-0"
@@ -68,7 +68,7 @@ export default function CompleteProfile() {
                   icon={faUserTie}
                   className="text-stone-100 text-lg mr-2 translate-y-[200%] group-hover:translate-y-0 transition duration-150 group-hover:duration-500"
                 />
-                Agency
+                Operator
                 <FontAwesomeIcon
                   icon={faUserTie}
                   className="text-lg ml-2 opacity-0"

@@ -13,15 +13,15 @@ type Review = {
 };
 
 const reviews = [
-    { name: "Alice Johnson", text: "The coworking space is fantastic! The environment is so inspiring and the facilities are top-notch. Highly recommend!", rating: 5 },
-    { name: "Michael Brown", text: "Great place to work! The meeting rooms are well-equipped and the staff is very friendly. Will definitely come back.", rating: 4.5 },
-    { name: "Sophia Davis", text: "I love the flexibility this coworking space offers. The booking process is seamless and the ambiance is perfect for productivity.", rating: 4 },
+    { name: "Alice Johnson", text: "The coworking collectionPoint is fantastic! The environment is so inspiring and the facilities are top-notch. Highly recommend!", rating: 5 },
+    { name: "Michael Brown", text: "Great place to work! The centro di raccoltas are well-equipped and the staff is very friendly. Will definitely come back.", rating: 4.5 },
+    { name: "Sophia Davis", text: "I love the flexibility this coworking collectionPoint offers. The visit process is seamless and the ambiance is perfect for productivity.", rating: 4 },
     { name: "James Wilson", text: "The internet speed is excellent, and the coffee is a nice touch. However, the noise level can be distracting at times.", rating: 3.5 },
-    { name: "Emma Martinez", text: "The coworking space is clean, modern, and has everything you need. The community vibe is also a big plus!", rating: 5 },
-    { name: "Oliver Garcia", text: "I was able to find and book a private office easily. The space exceeded my expectations. Highly recommend!", rating: 5 },
-    { name: "Isabella Rodriguez", text: "The coworking space is very well-organized. The seating options are comfortable, but the lighting could be improved.", rating: 4 },
-    { name: "Liam Hernandez", text: "This platform made it so easy to find a space that fits my needs. The coworking space I booked was perfect!", rating: 4.5 },
-    { name: "Mia Lopez", text: "I had a good experience booking a meeting room. The process was smooth, but the room lacked some essential equipment.", rating: 3.5 }
+    { name: "Emma Martinez", text: "The coworking collectionPoint is clean, modern, and has everything you need. The community vibe is also a big plus!", rating: 5 },
+    { name: "Oliver Garcia", text: "I was able to find and book a private office easily. The collectionPoint exceeded my expectations. Highly recommend!", rating: 5 },
+    { name: "Isabella Rodriguez", text: "The coworking collectionPoint is very well-organized. The seating options are comfortable, but the lighting could be improved.", rating: 4 },
+    { name: "Liam Hernandez", text: "This platform made it so easy to find a collectionPoint that fits my needs. The coworking collectionPoint I booked was perfect!", rating: 4.5 },
+    { name: "Mia Lopez", text: "I had a good experience visit a centro di raccolta. The process was smooth, but the room lacked some essential equipment.", rating: 3.5 }
 ];
 
 // Renders star icons based on the rating value

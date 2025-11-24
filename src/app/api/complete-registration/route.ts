@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { client: true, agency: true },
+      include: { user: true, operator: true },
     });
 
     if (!user) {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if the user already has a profile
-    if (user.client || user.agency) {
+    if (user.user || user.operator) {
       return NextResponse.json(
         { message: "Profile already completed." },
         { status: 400 }
@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
     if (role === "CLIENT") {
       if (!rest.name || !rest.surname || !rest.cellphone) {
         return NextResponse.json(
-          { message: "Missing client fields." },
+          { message: "Missing user fields." },
           { status: 400 }
         );
       }
-      await prisma.client.create({
+      await prisma.user.create({
         data: {
           name: rest.name,
           surname: rest.surname,
@@ -48,11 +48,11 @@ export async function POST(req: NextRequest) {
     } else if (role === "AGENCY") {
       if (!rest.name || !rest.vatNumber || !rest.telephone) {
         return NextResponse.json(
-          { message: "Missing agency fields." },
+          { message: "Missing operator fields." },
           { status: 400 }
         );
       }
-      await prisma.agency.create({
+      await prisma.operator.create({
         data: {
           name: rest.name,
           vatNumber: rest.vatNumber,

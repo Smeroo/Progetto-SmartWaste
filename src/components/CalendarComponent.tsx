@@ -8,7 +8,7 @@ interface CalendarComponentProps {
     onDateSelection?: (selectedDates: Set<string>) => void; // Callback when dates are selected
     selectedDates: Set<string>; // Currently selected dates
     setSelectedDates: (dates: Set<string>) => void; // Setter for selected dates
-    spaceId: string; // ID of the space for fetching availability
+    spaceId: string; // ID of the collectionPoint for fetching availability
 }
 
 // Main CalendarComponent
@@ -57,7 +57,7 @@ const CalendarComponent: React.FC<CalendarComponentProps> = ({ onDateSelection, 
     useEffect(() => {
         const fetchAvailability = async () => {
             try {
-                const response = await fetch(`/api/spaces/${spaceId}/availability?year=${currentYear}&month=${currentMonth + 1}`);
+                const response = await fetch(`/api/collectionPoints/${spaceId}/availability?year=${currentYear}&month=${currentMonth + 1}`);
                 const data = await response.json();
                 console.log('Fetched availability:', data.availableDates);
                 setAvailableDates(new Set(data.availableDates));

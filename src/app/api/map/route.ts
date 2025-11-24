@@ -2,11 +2,11 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // Handles GET requests to the /api/map
-// Returns all spaces with their coordinates
+// Returns all collectionPoints with their coordinates
 export async function GET() {
     try {
-        // Fetch all spaces with their coordinates
-        const spaces = await prisma.space.findMany({
+        // Fetch all collectionPoints with their coordinates
+        const collectionPoints = await prisma.collectionPoint.findMany({
             select: {
                 id: true,
                 name: true,
@@ -22,11 +22,11 @@ export async function GET() {
             }
         });
 
-        // Return the spaces as JSON response
-        return NextResponse.json(spaces);
+        // Return the collectionPoints as JSON response
+        return NextResponse.json(collectionPoints);
     }
     catch (error) {
         // Handle any errors that occur during the fetch
-        return NextResponse.json({ error: 'Failed to fetch spaces coordinates' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch collectionPoints coordinates' }, { status: 500 });
     }
 }

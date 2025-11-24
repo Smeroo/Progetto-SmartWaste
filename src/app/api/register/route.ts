@@ -11,10 +11,10 @@ export async function POST(req: Request) {
       password,
       role, // "CLIENT" || "AGENCY"
       name,
-      surname, // for Client
+      surname, // for User
       cellphone,
-      vatNumber, // for Agency
-      telephone, // for Agency
+      vatNumber, // for Operator
+      telephone, // for Operator
     } = body;
 
     // validation of required fields
@@ -45,21 +45,21 @@ export async function POST(req: Request) {
 
     if (role === "CLIENT" && (!name || !surname || !cellphone)) {
       return NextResponse.json(
-        { message: "Missing Client data" },
+        { message: "Missing User data" },
         { status: 400 }
       );
     }
 
     if (role === "AGENCY" && (!name || !vatNumber || !telephone)) {
       return NextResponse.json(
-        { message: "Missing Agency data" },
+        { message: "Missing Operator data" },
         { status: 400 }
       );
     }
 
     // create profile based on role
     if (role === "CLIENT") {
-      await prisma.client.create({
+      await prisma.user.create({
         data: {
           name,
           surname,
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         },
       });
     } else if (role === "AGENCY") {
-      await prisma.agency.create({
+      await prisma.operator.create({
         data: {
           name,
           vatNumber,

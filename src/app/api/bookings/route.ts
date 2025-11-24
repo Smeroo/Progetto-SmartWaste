@@ -3,8 +3,8 @@ import { auth } from "@/auth";
 import { NextResponse, NextRequest } from "next/server";
 import { isDateAvailable } from "@/lib/spaceAvailability";
 
-// Handles POST request to /api/bookings
-// Creates new bookings for a space for multiple dates
+// Handles POST request to /api/visits
+// Creates new visits for a collectionPoint for multiple dates
 export async function POST(request: NextRequest) {
     try {
         // Check if the user is authenticated
@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
 
         const createdBookings = [];
         for (const bookingDate of bookingDates) {
-            // Check if the booking already exists for the given date and space
-            const existing = await prisma.booking.findFirst({
+            // Check if the visit already exists for the given date and collectionPoint
+            const existing = await prisma.visit.findFirst({
                 where: {
                     bookingDate: {
                         gte: new Date(new Date(bookingDate).setHours(0, 0, 0, 0)),
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
             });
 
             if (existing) {
-                return NextResponse.json({ error: `Booking already exists for date ${bookingDate}` }, { status: 400 });
+                return NextResponse.json({ error: `Visit already exists for date ${bookingDate}` }, { status: 400 });
             }
 
             // Double-check availability
@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ error: `Selected date ${bookingDate} is not available` }, { status: 400 });
             }
 
-            // Create the booking
-            const booking = await prisma.booking.create({
+            // Create the visit
+            const visit = await prisma.visit.create({
                 data: {
                     bookingDate: new Date(bookingDate),
                     spaceId: spaceId,
@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
                 }
             });
 
-            // Add the created booking to the list
-            createdBookings.push(booking);
+            // Add the created visit to the list
+            createdBookings.push(visit);
         }
 
-        return NextResponse.json({ bookings: createdBookings });
+        return NextResponse.json({ visits: createdBookings });
     }
     catch (error) {
-        console.error("Error creating bookings:", error);
-        return NextResponse.json({ error: 'Error creating bookings: ' + error }, { status: 500 });
+        console.error("Error creating visits:", error);
+        return NextResponse.json({ error: 'Error creating visits: ' + error }, { status: 500 });
     }
 }

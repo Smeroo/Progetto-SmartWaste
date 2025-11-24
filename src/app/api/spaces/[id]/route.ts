@@ -15,8 +15,8 @@ export const config = {
 // Define the upload path for images
 const uploadPath = path.join(process.cwd(), 'public', 'uploads');
 
-// Handles GET requests to /api/spaces/[id]
-// Returns a single space
+// Handles GET requests to /api/collectionPoints/[id]
+// Returns a single collectionPoint
 export async function GET(request: Request, { params }: { params: { id: string } }) {
     try {
         const { id } = await params;
@@ -32,24 +32,24 @@ export async function GET(request: Request, { params }: { params: { id: string }
             );
         }
 
-        // Fetch the space with its related data
-        const space = await prisma.space.findUnique({
+        // Fetch the collectionPoint with its related data
+        const collectionPoint = await prisma.collectionPoint.findUnique({
             where: { id: spaceId },
-            include: { address: true, services: true, bookings: true, reviews: true }
+            include: { address: true, services: true, visits: true, reviews: true }
         });
 
-        if (!space) {
-            return NextResponse.json({ error: 'Space not found' }, { status: 404 });
+        if (!collectionPoint) {
+            return NextResponse.json({ error: 'CollectionPoint not found' }, { status: 404 });
         }
 
-        return NextResponse.json(space);
+        return NextResponse.json(collectionPoint);
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
 
-// Handles PUT requests to /api/spaces/[id]
-// Updates a single space
+// Handles PUT requests to /api/collectionPoints/[id]
+// Updates a single collectionPoint
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
     try {
         // Check if user is authenticated
@@ -88,8 +88,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         // Handle address
         const nominatimAddress = metadata.fullAddress;
 
-        // Update the space in the database
-        const updatedSpace = await prisma.space.update({
+        // Update the collectionPoint in the database
+        const updatedSpace = await prisma.collectionPoint.update({
             where: { id: spaceId },
             data: {
                 name: metadata.name,
@@ -129,7 +129,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
         // If there are files, handle image uploads
         if (files && files.length > 0) {
-            const spaceFolder = `space${spaceId}`;
+            const spaceFolder = `collectionPoint${spaceId}`;
             const spaceFolderPath = path.join(uploadPath, spaceFolder);
 
             // Create the folder if it doesn't exist
@@ -156,8 +156,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
                 savedImagePaths.push(`/uploads/${spaceFolder}/${fileName}`);
             }
 
-            // Update the space with the saved image paths
-            await prisma.space.update({
+            // Update the collectionPoint with the saved image paths
+            await prisma.collectionPoint.update({
                 where: { id: spaceId },
                 data: {
                     images: savedImagePaths,
@@ -167,13 +167,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
         return NextResponse.json(updatedSpace, { status: 200 });
     } catch (error) {
-        console.log('Error updating space:', error);
+        console.log('Error updating collectionPoint:', error);
         return NextResponse.json({ error: 'Update failed' + error }, { status: 500 });
     }
 }
 
-// Handles DELETE requests to /api/spaces/[id]
-// Deletes a single space
+// Handles DELETE requests to /api/collectionPoints/[id]
+// Deletes a single collectionPoint
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
     try {
         // Check if user is authenticated
@@ -199,14 +199,14 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
-        // Delete the space from the database
-        const deletedSpace = await prisma.space.delete({
+        // Delete the collectionPoint from the database
+        const deletedSpace = await prisma.collectionPoint.delete({
             where: { id: spaceId },
         });
 
-        const folderPath = path.join(process.cwd(), 'public', 'uploads', `space${id}`);
+        const folderPath = path.join(process.cwd(), 'public', 'uploads', `collectionPoint${id}`);
 
-        // Attempt to delete the folder containing the space's images
+        // Attempt to delete the folder containing the collectionPoint's images
         try {
             await fs.rm(folderPath, { recursive: true, force: true });
         } catch (fsError) {

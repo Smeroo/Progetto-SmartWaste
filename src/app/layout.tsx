@@ -57,14 +57,14 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <html lang="en">
+    <html lang="it">
       <head>
-        <meta name="description" content="WorQ - Your ultimate workspace solution. Explore spaces, connect, and collaborate effortlessly." />
+        <meta name="description" content="SmartWaste - La tua soluzione per la raccolta differenziata. Trova punti di raccolta, segnala problemi e contribuisci all'ambiente." />
         <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.svg" />
-        <title>WorQ</title>
+        <title>SmartWaste - Raccolta Differenziata Intelligente</title>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-        <meta name="theme-color" content="#f3f4f6" />
+        <meta name="theme-color" content="#10b981" />
       </head>
       <body className="bg-stone-200 text-stone-900 select-none">
         {/* <RegisterSW /> */}
@@ -73,14 +73,14 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
           <div className="bg-stone-100/75 border-1 border-stone-100 px-2.5 backdrop-blur-xs shadow-sm rounded-3xl flex flex-col md:grid items-center transition duration-250 grid-cols-1 md:grid-cols-[1fr_auto_1fr] w-full lg:w-3/4 xl:w-2/3">
             <div className="justify-evenly items-center text-stone-900 font-medium text-lg gap-3 text-center hidden md:flex">
               <button onClick={handleScrollToMap} className="rounded-2xl transition duration-250 w-full py-3
-                                                            hover:bg-stone-900 hover:text-stone-100
-                                                            active:bg-stone-900 active:text-stone-100">
-                Map
+                                                            hover:bg-emerald-500 hover:text-stone-100
+                                                            active:bg-emerald-500 active:text-stone-100">
+                Mappa
               </button>
-              <Link href="/spaces" className="rounded-2xl transition duration-250 w-full py-3
-                                            hover:bg-stone-900 hover:text-stone-100
-                                            active:bg-stone-900 active:text-stone-100">
-                Spaces
+              <Link href="/collection-points" className="rounded-2xl transition duration-250 w-full py-3
+                                            hover:bg-emerald-500 hover:text-stone-100
+                                            active:bg-emerald-500 active:text-stone-100">
+                Punti Raccolta
               </Link>
             </div>
 
@@ -89,7 +89,7 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                 href="/"
                 onClick={handleScrollToTop}
                 className="w-full md:w-auto text-3xl md:text-5xl font-bold px-6 pt-2 md:pb-4 text-stone-900">
-                Wor<span className="text-west-side-500">Q</span>
+                Smart<span className="text-emerald-500">Waste</span>
               </Link>
 
               {/* Mobile Menu */}
@@ -98,14 +98,14 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                   {/* First block: navigation */}
                   <button
                     onClick={e => { handleScrollToMap(); setMenuOpen(false); }}
-                    className="rounded-2xl transition duration-250 w-full py-3 hover:bg-stone-900 hover:text-stone-100 active:bg-stone-900 active:text-stone-100">
-                    Map
+                    className="rounded-2xl transition duration-250 w-full py-3 hover:bg-emerald-500 hover:text-stone-100 active:bg-emerald-500 active:text-stone-100">
+                    Mappa
                   </button>
                   <Link
-                    href="/spaces"
+                    href="/collection-points"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-2xl transition duration-250 w-full py-3 hover:bg-stone-900 hover:text-stone-100 active:bg-stone-900 active:text-stone-100">
-                    Spaces
+                    className="rounded-2xl transition duration-250 w-full py-3 hover:bg-emerald-500 hover:text-stone-100 active:bg-emerald-500 active:text-stone-100">
+                    Punti Raccolta
                   </Link>
                 </div>
                 {/* Second block: auth/profile */}
@@ -115,13 +115,13 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                       <button
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className="rounded-2xl transition duration-250 w-full py-3 hover:bg-stone-900 hover:text-stone-100 active:bg-stone-900 active:text-stone-100">
-                        Logout
+                        Esci
                       </button>
                       <Link
                         href="/profile"
                         onClick={() => setMenuOpen(false)}
-                        className="rounded-2xl transition duration-250 w-full py-3 hover:bg-west-side-500 hover:text-stone-100 active:bg-west-side-500 active:text-stone-100">
-                        Profile
+                        className="rounded-2xl transition duration-250 w-full py-3 hover:bg-emerald-500 hover:text-stone-100 active:bg-emerald-500 active:text-stone-100">
+                        Profilo
                       </Link>
                     </>
                   ) : (
@@ -130,13 +130,13 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                         href="/register"
                         onClick={() => setMenuOpen(false)}
                         className="rounded-2xl transition duration-250 w-full py-3 hover:bg-stone-900 hover:text-stone-100 active:bg-stone-900 active:text-stone-100">
-                        Signup
+                        Registrati
                       </Link>
                       <Link
                         href="/login"
                         onClick={() => setMenuOpen(false)}
-                        className="rounded-2xl transition duration-250 w-full py-3 hover:bg-west-side-500 hover:text-stone-100 active:bg-west-side-500 active:text-stone-100">
-                        Login
+                        className="rounded-2xl transition duration-250 w-full py-3 hover:bg-emerald-500 hover:text-stone-100 active:bg-emerald-500 active:text-stone-100">
+                        Accedi
                       </Link>
                     </>
                   )}
@@ -159,12 +159,12 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                     className="rounded-2xl transition duration-250 w-full py-3 
                                                           hover:bg-stone-900 hover:text-stone-100
                                                           active:bg-stone-900 active:text-stone-100">
-                    Logout
+                    Esci
                   </button>
                   <Link href="/profile" className="rounded-2xl transition duration-250 w-full py-3 
-                                                  hover:bg-west-side-500 hover:text-stone-100
-                                                  active:bg-west-side-500 active:text-stone-100">
-                    Profile
+                                                  hover:bg-emerald-500 hover:text-stone-100
+                                                  active:bg-emerald-500 active:text-stone-100">
+                    Profilo
                   </Link>
                 </>
               ) : (
@@ -172,12 +172,12 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                   <Link href="/register" className="rounded-2xl transition duration-250 w-full py-3 
                                                     hover:bg-stone-900 hover:text-stone-100
                                                     active:bg-stone-900 active:text-stone-100">
-                    Signup
+                    Registrati
                   </Link>
                   <Link href="/login" className="rounded-2xl transition duration-250 w-full py-3 
-                                                 hover:bg-west-side-500 hover:text-stone-100
-                                                 active:bg-west-side-500 active:text-stone-100">
-                    Login
+                                                 hover:bg-emerald-500 hover:text-stone-100
+                                                 active:bg-emerald-500 active:text-stone-100">
+                    Accedi
                   </Link>
                 </>
               )}
@@ -195,29 +195,29 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
             {/* Main Info */}
             <div className="flex flex-col gap-5">
               <h1 className="text-4xl font-bold">
-                Wor<span className="text-turquoise-blue-400">Q</span>
+                Smart<span className="text-emerald-400">Waste</span>
               </h1>
               {/* Contact phone number */}
               <p className="text-base lg:text-xl">
-                Call us{" "}
+                Chiamaci{" "}
                 <a
                   href="tel:800515516"
                   className="underline decoration-2 cursor-pointer transition
-                            hover:decoration-turquoise-blue-400
-                            active:decoration-turquoise-blue-400"
+                            hover:decoration-emerald-400
+                            active:decoration-emerald-400"
                 >
                   800 515 516
                 </a>
               </p>
               <p className="text-base lg:text-xl">
-                Send us an email at{" "}
+                Scrivici a{" "}
                 <a
-                  href="mailto:info@worq.com"
+                  href="mailto:info@smartwaste.com"
                   className="underline decoration-2 cursor-pointer transition
-                            hover:decoration-turquoise-blue-400
-                            active:decoration-turquoise-blue-400"
+                            hover:decoration-emerald-400
+                            active:decoration-emerald-400"
                 >
-                  info@worq.com
+                  info@smartwaste.com
                 </a>
               </p>
               {/* Social media icons */}
@@ -226,55 +226,55 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                   icon={faXTwitter}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
                 <FontAwesomeIcon
                   icon={faFacebookSquare}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
                 <FontAwesomeIcon
                   icon={faLinkedin}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
                 <FontAwesomeIcon
                   icon={faYoutube}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
                 <FontAwesomeIcon
                   icon={faInstagram}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
                 <FontAwesomeIcon
                   icon={faTiktok}
                   className="aspect-square p-2 text-2xl cursor-pointer rounded-lg
                             transition-all duration-150 ease-out active:scale-90 hover:scale-110
-                            hover:bg-turquoise-blue-400 hover:text-stone-900
-                            active:bg-turquoise-blue-400 active:text-stone-900"
+                            hover:bg-emerald-400 hover:text-stone-900
+                            active:bg-emerald-400 active:text-stone-900"
                 />
               </div>
             </div>
 
             {/* Newsletter subscription */}
             <div className="flex flex-col justify-center w-full lg:w-auto gap-5 lg:gap-10">
-              <h2 className="font-bold text-lg lg:text-3xl">Subscribe and stay up to date.</h2>
+              <h2 className="font-bold text-lg lg:text-3xl">Iscriviti alla newsletter</h2>
               <input
                 type="text"
-                placeholder="Enter your email..."
+                placeholder="Inserisci la tua email..."
                 id="newsletter"
-                className="w-full outline-0 border-2 border-stone-100 rounded-2xl p-4"
+                className="w-full outline-0 border-2 border-stone-100 rounded-2xl p-4 text-stone-900"
               />
               {/* email input management */}
               <div className="flex items-center gap-4">
@@ -289,14 +289,14 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                     if (emailRegex.test(email)) {
                       if (messageElement) {
                         messageElement.textContent =
-                          "Subscribed successfully!";
+                          "Iscrizione completata!";
                         messageElement.classList.add(
-                          "decoration-turquoise-blue-400"
+                          "decoration-emerald-400"
                         );
                       }
                     } else {
                       if (messageElement) {
-                        messageElement.textContent = "Invalid email.";
+                        messageElement.textContent = "Email non valida.";
                         messageElement.classList.add("decoration-red-500");
                       }
                     }
@@ -306,7 +306,7 @@ function InnerLayout({ children }: { children: React.ReactNode }) {
                             hover:bg-stone-100 hover:text-stone-900
                             active:bg-stone-100 active:text-stone-900
                             ">
-                  Subscribe
+                  Iscriviti
                 </button>
                 <p
                   id="message"

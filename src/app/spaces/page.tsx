@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -7,15 +7,15 @@ import HorizontalOptions from '@/components/HorizontalOptions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faSpinner, faStar, faStarHalf } from '@fortawesome/free-solid-svg-icons';
 
-// This component renders the main page for listing available spaces.
+// This component renders the main page for listing available collectionPoints.
 // It includes search, filter by price, and filter by typology functionalities.
-const Spaces = () => {
+const CollectionPoints = () => {
   // State variables for search, price filter, loading, selected typology, and UI toggles.
   const [searchState, setSearchState] = useState({ searchText: '', });
   const [priceFilterState, setPriceFilterState] = useState({ maxPrice: 300, });
-  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [collectionPoints, setSpaces] = useState<CollectionPoint[]>([]);
   const [loading, setLoading] = useState(true); // Stato di caricamento
-  const [selectedTypology, setSelectedTypology] = useState<string>('All Spaces');
+  const [selectedTypology, setSelectedTypology] = useState<string>('All CollectionPoints');
   const [isSearchOpen, setIsSearchOpen] = useState(false); // Stato per apertura/chiusura barra di ricerca
   const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false); // Stato per apertura/chiusura filtro prezzo
 
@@ -51,8 +51,8 @@ const Spaces = () => {
     }, 100); // Ritardo di 100ms per evitare conflitti
   };
 
-  // Space interface defines the structure of a space object.
-  interface Space {
+  // CollectionPoint interface defines the structure of a collectionPoint object.
+  interface CollectionPoint {
     id: string;
     name: string;
     images: string[];
@@ -66,14 +66,14 @@ const Spaces = () => {
 
   // Mapping between UI typology names and backend values.
   const typologyMapping: Record<string, string> = {
-    'All Spaces': '',
+    'All CollectionPoints': '',
     'Meeting Rooms': 'MEETING_ROOMS',
     'Private Offices': 'PRIVATE_OFFICES',
     'Common Areas': 'COMMON_AREAS',
-    'Outdoor Spaces': 'OUTDOOR_SPACES',
+    'Outdoor CollectionPoints': 'OUTDOOR_SPACES',
   };
 
-  // Fetches spaces from the backend API whenever filters or search change.
+  // Fetches collectionPoints from the backend API whenever filters or search change.
   useEffect(() => {
     async function fetchSpaces() {
       try {
@@ -87,7 +87,7 @@ const Spaces = () => {
           queryParams.append('q', searchState.searchText);
         }
         queryParams.append('maxPrice', priceFilterState.maxPrice.toString());
-        const res = await fetch(`/api/spaces?${queryParams.toString()}`);
+        const res = await fetch(`/api/collectionPoints?${queryParams.toString()}`);
         const data = await res.json();
         setSpaces(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -104,10 +104,10 @@ const Spaces = () => {
     <div id='home' className="overflow-y-auto">
       <section className="flex flex-col items-center pt-28 pb-5 px-5 sm:px-10 md:px-15 lg:px-20">
 
-        {/* Mobile Space Type Filter */}
+        {/* Mobile CollectionPoint Type Filter */}
         <div className="bg-stone-300 w-fit p-2 rounded-3xl sm:hidden">
           <HorizontalOptions
-            options={['All Spaces', 'Meeting Rooms', 'Private Offices', 'Common Areas', 'Outdoor Spaces']}
+            options={['All CollectionPoints', 'Meeting Rooms', 'Private Offices', 'Common Areas', 'Outdoor CollectionPoints']}
             initialSelected={0}
             layout='grid'
             backgroundColor="bg-stone-100"
@@ -125,7 +125,7 @@ const Spaces = () => {
             tabIndex={0} // Makes the div focusable to detect blur
           >
             <HorizontalOptions
-              options={['All Spaces', 'Meeting Rooms', 'Private Offices', 'Common Areas', 'Outdoor Spaces']}
+              options={['All CollectionPoints', 'Meeting Rooms', 'Private Offices', 'Common Areas', 'Outdoor CollectionPoints']}
               initialSelected={0}
               backgroundColor="bg-stone-100"
               optionClassName="px-5 h-full flex justify-center items-center text-xs md:text-sm lg:text-base"
@@ -179,7 +179,7 @@ const Spaces = () => {
               <input
                 type="range"
                 id="price-range"
-                min={spaces.length > 0 ? Math.min(...spaces.map((space) => space.price)) : 0}
+                min={collectionPoints.length > 0 ? Math.min(...collectionPoints.map((collectionPoint) => collectionPoint.price)) : 0}
                 max="300"
                 step="20"
                 value={priceFilterState.maxPrice}
@@ -202,22 +202,22 @@ const Spaces = () => {
         {/* Griglia Spazi */}
         <div className={`w-full pt-5 sm:pt-10
                grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5
-               ${spaces.length === 0 ? 'h-[65vh]' : ''}`}>
+               ${collectionPoints.length === 0 ? 'h-[65vh]' : ''}`}>
 
-          {!loading && spaces.length === 0 && (
+          {!loading && collectionPoints.length === 0 && (
             <p className="text-center text-balance text-stone-600 col-span-4">
-              No spaces available. Please try adjusting your search or typology filter.
+              No collectionPoints available. Please try adjusting your search or typology filter.
             </p>)}
 
-          {!loading && spaces.map((space) => (
-            <Link href={`/spaces/${space.id}`} key={space.id}
+          {!loading && collectionPoints.map((collectionPoint) => (
+            <Link href={`/collectionPoints/${collectionPoint.id}`} key={collectionPoint.id}
               className='w-full h-80 sm:h-100 bg-stone-100 col-span-1 md: overflow-hidden flex flex-col
                           rounded-4xl cursor-pointer shadow-sm hover:shadow-md 
                           hover:scale-105 active:scale-95 transition-all duration-150 ease-out'>
               <div className='w-full h-1/2 relative'>
                 <Image
-                  src={space.images?.[0] || '/placeholder-image.jpg'}
-                  alt={space.name}
+                  src={collectionPoint.images?.[0] || '/placeholder-image.jpg'}
+                  alt={collectionPoint.name}
                   fill
                   priority
                   sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -228,19 +228,19 @@ const Spaces = () => {
               <div className='w-full h-1/2 flex flex-col justify-between p-5'>
                 {/* Informazioni come titolo e location */}
                 <div>
-                  <h3 className='font-bold text-base sm:text-xl'>{space.name}</h3>
-                  <p className='text-sm text-stone-600'>{space.address.city}, {space.address.country}</p>
+                  <h3 className='font-bold text-base sm:text-xl'>{collectionPoint.name}</h3>
+                  <p className='text-sm text-stone-600'>{collectionPoint.address.city}, {collectionPoint.address.country}</p>
                 </div>
 
                 {/* Stelle e prezzo in fondo */}
                 <div className='flex flex-col sm:flex-row sm:justify-between items-end sm:items-center'>
                   <div className='flex items-center text-sm sm:text-lg text-yellow-400'>
-                    {[...Array(Math.floor(space.avgRating))].map((_, i) => (
+                    {[...Array(Math.floor(collectionPoint.avgRating))].map((_, i) => (
                       <FontAwesomeIcon key={i} icon={faStar} />
                     ))}
-                    {space.avgRating % 1 !== 0 && <FontAwesomeIcon icon={faStarHalf} />}
+                    {collectionPoint.avgRating % 1 !== 0 && <FontAwesomeIcon icon={faStarHalf} />}
                   </div>
-                  <p className='flex font-bold text-lg sm:text-2xl'>{space.price}€<span className='text-base align-super'>/day</span></p>
+                  <p className='flex font-bold text-lg sm:text-2xl'>{collectionPoint.price}€<span className='text-base align-super'>/day</span></p>
                 </div>
               </div>
             </Link>
@@ -251,4 +251,4 @@ const Spaces = () => {
   );
 };
 
-export default Spaces;
+export default CollectionPoints;

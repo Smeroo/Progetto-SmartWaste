@@ -1,6 +1,6 @@
 "use client";
 
-// This page allows users to register as either a Client or an Agency.
+// This page allows users to register as either a User or an Operator.
 // Import necessary hooks, icons, and form components.
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,7 +26,7 @@ export default function RegisterPage() {
             Sign up for <br className="sm:hidden" /> an account
           </h2>
 
-          {/* If no role is selected, show buttons to choose between Client and Agency. */}
+          {/* If no role is selected, show buttons to choose between User and Operator. */}
           {!role ? (
             <div className="flex flex-col sm:flex-row gap-5">
               <button
@@ -40,7 +40,7 @@ export default function RegisterPage() {
                   icon={faUser}
                   className="text-stone-100 text-lg mr-2 translate-y-[200%] group-hover:translate-y-0 transition duration-150 group-hover:duration-500"
                 />
-                Client
+                User
                 <FontAwesomeIcon
                   icon={faUser}
                   className="text-lg ml-2 opacity-0"
@@ -57,7 +57,7 @@ export default function RegisterPage() {
                   icon={faUserTie}
                   className="text-stone-100 text-lg mr-2 translate-y-[200%] group-hover:translate-y-0 transition duration-150 group-hover:duration-500"
                 />
-                Agency
+                Operator
                 <FontAwesomeIcon
                   icon={faUserTie}
                   className="text-lg ml-2 opacity-0"

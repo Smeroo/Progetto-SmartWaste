@@ -14,7 +14,7 @@ export async function sendResetEmail(email: string, resetUrl: string) {
   });
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM || `"WorQ Support" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM || `"SmartWaste Support" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Reset your password",
     html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link is valid for 1 hour.</p>`,

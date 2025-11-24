@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons/faArrowUpRightFromSquare';
 
-// MapComponent displays a Leaflet map with markers for spaces fetched from the API
+// MapComponent displays a Leaflet map with markers for collection points fetched from the API
 const MapComponent: React.FC = () => {
     useEffect(() => {
         let map: any = null; // Reference to the Leaflet map instance
@@ -16,15 +16,16 @@ const MapComponent: React.FC = () => {
             if (typeof window !== 'undefined') {
                 const L = (await import('leaflet')).default;
 
-                // Custom icon for map markers
-                const customIcon = L.Icon.extend({
-                    options: {
-                        iconUrl: "/location-dot-solid-turquoise-blue-50.svg",
-                        iconSize: [32, 32],
-                        iconAnchor: [16, 32],
-                        popupAnchor: [0, -32],
-                    },
-                });
+                // Custom icon for map markers (green for eco-friendly theme)
+                // Custom green icon for eco-friendly theme
+		const customIcon = new L.Icon({
+    		iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    		shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    		iconSize: [25, 41],
+    		iconAnchor: [12, 41],
+    		popupAnchor: [1, -34],
+    		shadowSize: [41, 41]
+		});
 
                 // Prevent re-initialization if map already exists
                 const mapContainer = document.getElementById('map');
@@ -46,40 +47,43 @@ const MapComponent: React.FC = () => {
                     attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 }).addTo(map);
 
-                // Fetch spaces and add markers to the map
-                const fetchSpaces = async () => {
+                // Fetch collection points and add markers to the map
+                const fetchCollectionPoints = async () => {
                     try {
-                        const response = await fetch('/api/map');
-                        const spaces = await response.json();
+                        const response = await fetch('/api/collection-points');
+                        const data = await response.json();
+                        
+                        // Ensure data is an array
+                        const collectionPoints = Array.isArray(data) ? data : (data.collectionPoints || []);
 
-                        spaces.forEach((space: any) => {
-                            const { latitude, longitude } = space.address;
+                        collectionPoints.forEach((point: any) => {
+                            const { latitude, longitude } = point.address || {};
                             if (latitude && longitude) {
                                 // Popup content for each marker
                                 const popupContent = `
                                     <div class="flex gap-3">
-                                        <a id="space-link" href="/spaces/${space.id}" target="_blank" class="flex justify-center items-center aspect-square size-12 bg-stone-100 hover:bg-stone-900 shadow-sm border-1 border-stone-900/10 rounded-md transition">
+                                        <a id="point-link" href="/collection-points/${point.id}" target="_blank" class="flex justify-center items-center aspect-square size-12 bg-stone-100 hover:bg-emerald-500 shadow-sm border-1 border-stone-900/10 rounded-md transition">
                                             ${ReactDOMServer.renderToString(<FontAwesomeIcon icon={faArrowUpRightFromSquare} />)}
                                         </a>
                                         <div class="flex flex-col">
-                                            <h2 class="font-bold text-lg m-0">${space.name}</h2>
+                                            <h2 class="font-bold text-lg m-0">${point.name}</h2>
                                             <p style="margin: 0" class="text-stone-600">
-                                                ${space.address?.number != null ? `${space.address?.street} ${space.address.number}` : `${space.address?.street}`}, ${space.address?.city}
+                                                ${point.address?.number != null ? `${point.address?.street} ${point.address.number}` : `${point.address?.street}`}, ${point.address?.city}
                                             </p>
                                         </div>
                                     </div>
                                 `;
-                                L.marker([latitude, longitude], { icon: new customIcon() })
+                                L.marker([latitude, longitude], { icon: customIcon })
                                     .addTo(map)
                                     .bindPopup(popupContent);
                             }
                         });
                     } catch (error) {
-                        console.error('Failed to fetch spaces:', error);
+                        console.error('Failed to fetch collection points:', error);
                     }
                 };
 
-                fetchSpaces();
+                fetchCollectionPoints();
 
                 // Enable map controls (drag/zoom) on map click
                 const enableControls = () => {

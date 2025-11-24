@@ -35,7 +35,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             where: { id: reviewId },
         });
 
-        // Update the average rating of the associated space
+        // Update the average rating of the associated collectionPoint
         await updateSpaceAvgRating(review.spaceId);
 
         return NextResponse.json(review);

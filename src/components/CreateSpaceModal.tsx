@@ -12,7 +12,7 @@ library.add(
     faVideoCamera, faChild, faDog, faParking, faLock, faBolt
 );
 
-// Modal for creating a new space listing
+// Modal for creating a new collectionPoint listing
 const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId: string, onSubmitComplete: (status: number | null) => void }> = ({ isOpen, onClose, userId, onSubmitComplete }) => {
     // State for image previews
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -206,7 +206,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
             });
 
             // Sends the form data to the server
-            const response = await fetch('/api/spaces', {
+            const response = await fetch('/api/collectionPoints', {
                 method: 'POST',
                 body: formDataToSend,
             });
@@ -216,7 +216,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
             onClose(); // Closes the modal
         }
         catch (error) {
-            console.error('Error creating space:', error); // Logs any errors during submission
+            console.error('Error creating collectionPoint:', error); // Logs any errors during submission
         }
     };
 
@@ -250,7 +250,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
             ></div>
             <div
                 className={`overflow-y-auto bg-stone-100 rounded-l-xl rounded-r-md md:rounded-xl shadow-lg max-w-6xl max-h-full w-full p-5 relative transition-transform duration-300 ${isVisible ? 'scale-100' : 'scale-90'}`}>
-                <h2 className="text-lg sm:text-2xl font-bold mb-5 pr-10">Publish a New Space</h2>
+                <h2 className="text-lg sm:text-2xl font-bold mb-5 pr-10">Publish a New CollectionPoint</h2>
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                     <div className="flex flex-col sm:flex-row gap-5">
                         {/* Left Section: Images and Services */}
@@ -339,7 +339,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                                         value={formData.name}
                                         onChange={handleInputChange}
                                         className="p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-                                        placeholder="Enter space name" />
+                                        placeholder="Enter collectionPoint name" />
                                 </div>
                                 <div className="w-full flex flex-col relative">
                                     <label className="flex items-center text-sm md:text-base font-medium pl-1 pb-1 text-stone-900">
@@ -360,7 +360,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                                             onFocus={() => setSuggestionsVisible(true)}
                                             onBlur={() => setSuggestionsVisible(false)}
                                             className="w-full p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50"
-                                            placeholder="Enter space address"
+                                            placeholder="Enter collectionPoint address"
                                         />
                                         {isLoadingSuggestions && (
                                             <div className='absolute inset-y-0 right-0 aspect-square h-full flex justify-center items-center text-stone-600'>
@@ -433,10 +433,10 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                                     </div>
                                 </div>
                             </div>
-                            {/* Space Type dropdown */}
+                            {/* CollectionPoint Type dropdown */}
                             <div className="flex flex-col relative">
                                 <label className="flex items-center text-sm md:text-base font-medium pl-1 pb-1 text-stone-900">
-                                    Space type
+                                    CollectionPoint type
                                     {errors.typology && errorDot}
                                 </label>
                                 <div className="relative w-full">
@@ -469,7 +469,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                                         <option value="MEETING_ROOMS">Meeting Room</option>
                                         <option value="PRIVATE_OFFICES">Private Office</option>
                                         <option value="COMMON_AREAS">Common Area</option>
-                                        <option value="OUTDOOR_SPACES">Outdoor Space</option>
+                                        <option value="OUTDOOR_SPACES">Outdoor CollectionPoint</option>
                                     </select>
                                     <span className={`pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-600 transition-transform duration-200 ${isDropdownOpen ? '-scale-y-100' : ''}`}>
                                         <FontAwesomeIcon icon={faChevronDown} />
@@ -487,7 +487,7 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                                     value={formData.description}
                                     onChange={handleInputChange}
                                     className="min-h-fit p-2 border rounded-lg border-stone-300 focus:outline-none focus:ring-2 focus:ring-west-side-500 bg-stone-50 resize-none"
-                                    placeholder="Enter space description"
+                                    placeholder="Enter collectionPoint description"
                                     rows={3}
                                 />
                             </div>
@@ -505,10 +505,10 @@ const CreateSpaceModal: React.FC<{ isOpen: boolean; onClose: () => void, userId:
                             <p className='whitespace-nowrap text-xl text-start w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Clear fields</p>
                         </button>
 
-                        {/* Publish space button */}
+                        {/* Publish collectionPoint button */}
                         <button type='submit' className='flex justify-end items-center rounded-md ring-2 ring-west-side-500 bg-stone-100 hover:bg-west-side-500 active:bg-west-side-500 text-west-side-500 hover:text-stone-100 active:text-stone-100 shadow-sm transition-all duration-150 overflow-hidden
                                             w-10 hover:w-43 active:w-43 ease-out active:scale-90 hover:scale-110 origin-right group'>
-                            <p className='whitespace-nowrap text-xl text-end w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Publish space</p>
+                            <p className='whitespace-nowrap text-xl text-end w-full opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-150'>Publish collectionPoint</p>
                             <div className='aspect-square bg-stone-100 group-hover:bg-west-side-500 group-active:bg-west-side-500 size-10 text-2xl rounded-md flex items-center justify-center duration-150'>
                                 <FontAwesomeIcon icon={faPlus} />
                             </div>

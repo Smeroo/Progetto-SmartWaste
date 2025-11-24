@@ -20,21 +20,21 @@ export async function GET() {
         select: {
           email: true,
           role: true,
-          client: {
+          user: {
             select: {
               name: true,
               surname: true,
               cellphone: true,
-              bookings: {
+              visits: {
                 where: {
                   bookingDate: {
-                    gt: new Date(), // Only bookings after the current day
+                    gt: new Date(), // Only visits after the current day
                   },
                 },
                 select: {
                   id: true,
                   bookingDate: true,
-                  space: {
+                  collectionPoint: {
                     select: {
                       id: true,
                       name: true,
@@ -55,13 +55,13 @@ export async function GET() {
           id: true,
           email: true,
           role: true,
-          agency: {
+          operator: {
             select: {
               userId: true,
               name: true,
               vatNumber: true,
               telephone: true,
-              spaces: {
+              collectionPoints: {
                 select: {
                   id: true,
                   name: true,
@@ -103,7 +103,7 @@ export async function PUT(request: Request) {
       const updatedUser = await prisma.user.update({
         where: { id: session.user.id },
         data: {
-          client: {
+          user: {
             update: {
               name: userData.name,
               surname: userData.surname,
@@ -114,7 +114,7 @@ export async function PUT(request: Request) {
         select: {
           email: true,
           role: true,
-          client: true
+          user: true
         }
       });
       return NextResponse.json(updatedUser);
@@ -122,7 +122,7 @@ export async function PUT(request: Request) {
       const updatedUser = await prisma.user.update({
         where: { id: session.user.id },
         data: {
-          agency: {
+          operator: {
             update: {
               name: userData.name,
               vatNumber: userData.vatNumber,
@@ -133,7 +133,7 @@ export async function PUT(request: Request) {
         select: {
           email: true,
           role: true,
-          agency: true
+          operator: true
         }
       });
       return NextResponse.json(updatedUser, { status: 200 });

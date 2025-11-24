@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,27 +11,27 @@ import Link from 'next/link';
 
 export default function Profile() {
     // State variables for modals
-    const [isCreateSpaceModalOpen, setCreateSpaceModalOpen] = useState(false); // Controls the visibility of the Create Space modal
-    const [isEditSpaceModalOpen, setEditSpaceModalOpen] = useState(false); // Controls the visibility of the Edit Space modal
+    const [isCreateSpaceModalOpen, setCreateSpaceModalOpen] = useState(false); // Controls the visibility of the Create CollectionPoint modal
+    const [isEditSpaceModalOpen, setEditSpaceModalOpen] = useState(false); // Controls the visibility of the Edit CollectionPoint modal
     const [isEditProfileModalOpen, setEditProfileModalOpen] = useState(false); // Controls the visibility of the Edit Profile modal
     // State variables for user data
     const [isLoading, setIsLoading] = useState(true); // Indicates if user data is being loaded
-    const [selectedSpace, setSelectedSpace] = useState<string>(""); // Stores the ID of the selected space for editing
+    const [selectedSpace, setSelectedSpace] = useState<string>(""); // Stores the ID of the selected collectionPoint for editing
     const [userEmail, setUserEmail] = useState(""); // Stores the user's email
     const [userRole, setUserRole] = useState(""); // Stores the user's role (CLIENT or AGENCY)
-    const [client, setClient] = useState({
+    const [user, setClient] = useState({
         name: 'Name',
         surname: 'Surname',
         cellphone: 'Cellphone',
-        bookings: [],
-    }); // Stores client-specific data
-    const [agency, setAgency] = useState({
+        visits: [],
+    }); // Stores user-specific data
+    const [operator, setAgency] = useState({
         userId: '',
-        name: 'Agency Name',
+        name: 'Operator Name',
         vatNumber: 'VAT Number',
         telephone: 'Telephone',
-        spaces: [],
-    }); // Stores agency-specific data
+        collectionPoints: [],
+    }); // Stores operator-specific data
 
     // Fetch user data from the API
     const fetchUserData = useCallback(async () => {
@@ -41,10 +41,10 @@ export default function Profile() {
             setUserEmail(data.email); // Set the user's email
             setUserRole(data.role); // Set the user's role
             if (data.role === "CLIENT") {
-                setClient(data.client); // Set client data if user is a client
+                setClient(data.user); // Set user data if user is a user
             }
             else if (data.role === 'AGENCY') {
-                setAgency(data.agency); // Set agency data if user is an agency
+                setAgency(data.operator); // Set operator data if user is an operator
             }
         }
         catch (error) {
@@ -56,39 +56,39 @@ export default function Profile() {
         }
     }, []);
 
-    // Handle booking deletion
+    // Handle visit deletion
     const handleBookingDelete = async (bookingId: string) => {
         try {
-            const response = await fetch(`/api/bookings/${bookingId}`, {
-                method: 'DELETE', // Send a DELETE request to remove the booking
+            const response = await fetch(`/api/visits/${bookingId}`, {
+                method: 'DELETE', // Send a DELETE request to remove the visit
             });
             if (!response.ok) {
-                throw new Error('Failed to delete booking'); // Throw error if deletion fails
+                throw new Error('Failed to delete visit'); // Throw error if deletion fails
             }
-            // Optionally, refresh the bookings after deletion
+            // Optionally, refresh the visits after deletion
             await fetchUserData(); // Refresh user data after deletion
-            toast.success('Booking deleted successfully!'); // Show success message
+            toast.success('Visit deleted successfully!'); // Show success message
         } catch (error) {
-            console.error('Error deleting booking:', error); // Log any errors
-            toast.error('Failed to delete booking. Please try again.'); // Show error message
+            console.error('Error deleting visit:', error); // Log any errors
+            toast.error('Failed to delete visit. Please try again.'); // Show error message
         }
     }
 
-    // Handle space deletion
+    // Handle collectionPoint deletion
     const handleSpaceDelete = async (spaceId: string) => {
         try {
-            const response = await fetch(`/api/spaces/${spaceId}`, {
-                method: 'DELETE', // Send a DELETE request to remove the space
+            const response = await fetch(`/api/collectionPoints/${spaceId}`, {
+                method: 'DELETE', // Send a DELETE request to remove the collectionPoint
             });
             if (!response.ok) {
-                throw new Error('Failed to delete space'); // Throw error if deletion fails
+                throw new Error('Failed to delete collectionPoint'); // Throw error if deletion fails
             }
-            // Optionally, refresh the spaces after deletion
+            // Optionally, refresh the collectionPoints after deletion
             await fetchUserData(); // Refresh user data after deletion
-            toast.success('Space deleted successfully!'); // Show success message
+            toast.success('CollectionPoint deleted successfully!'); // Show success message
         } catch (error) {
-            console.error('Error deleting space:', error); // Log any errors
-            toast.error('Failed to delete space. Please try again.'); // Show error message
+            console.error('Error deleting collectionPoint:', error); // Log any errors
+            toast.error('Failed to delete collectionPoint. Please try again.'); // Show error message
         }
     }
 
@@ -123,7 +123,7 @@ export default function Profile() {
                                 <FontAwesomeIcon icon={faUser} className="text-stone-600 w-2/3 h-2/3 text-[5rem]" />
                             </div>
                             <h1 className="text-2xl font-bold text-stone-800">
-                                {userRole === 'AGENCY' ? agency.name : `${client?.name} ${client?.surname}`}
+                                {userRole === 'AGENCY' ? operator.name : `${user?.name} ${user?.surname}`}
                             </h1>
                         </div>
                         {/* Columns 2 and 3: Email and Cellphone (stacked on md and up) */}
@@ -138,14 +138,14 @@ export default function Profile() {
                                 <div className="flex flex-col justify-center items-center gap-1 w-full">
                                     <p className="text-sm font-bold w-full lg:w-auto">{userRole === 'AGENCY' ? "Telephone" : "Cellphone"}</p>
                                     <p className="text-stone-600 break-all w-full lg:w-auto">
-                                        {userRole === 'AGENCY' ? agency.telephone : client?.cellphone}
+                                        {userRole === 'AGENCY' ? operator.telephone : user?.cellphone}
                                     </p>
                                 </div>
                                 {/* VAT (only for AGENCY) */}
                                 {userRole === 'AGENCY' && (
                                     <div className="flex flex-col justify-center items-center gap-1 w-full">
                                         <p className="text-sm font-bold w-full lg:w-auto">VAT</p>
-                                        <p className="text-stone-600 break-all w-full lg:w-auto">{agency.vatNumber}</p>
+                                        <p className="text-stone-600 break-all w-full lg:w-auto">{operator.vatNumber}</p>
                                     </div>
                                 )}
                             </div>
@@ -163,13 +163,13 @@ export default function Profile() {
                                     <FontAwesomeIcon icon={faUserPen} />
                                 </div>
                             </button>
-                            {/* Publish Space Button (only for AGENCY) */}
+                            {/* Publish CollectionPoint Button (only for AGENCY) */}
                             {userRole === 'AGENCY' && (
                                 <button onClick={() => setCreateSpaceModalOpen(true)}
                                     className='flex justify-end items-center rounded-lg ring-2 ring-west-side-500 bg-stone-100 hover:bg-west-side-500 active:bg-west-side-500 text-west-side-500 hover:text-stone-100 active:text-stone-100 shadow-sm transition-all duration-150 overflow-hidden
                                                w-10 hover:w-43 active:w-43 ease-out active:scale-90 hover:scale-110 origin-right group'>
                                     <p className='whitespace-nowrap text-xl text-end w-full opacity-0 group-hover:opacity-100 group-active:opacity-100
-                                                    duration-150'>Publish space</p>
+                                                    duration-150'>Publish collectionPoint</p>
                                     <div className='aspect-square bg-stone-100 group-hover:bg-west-side-500 group-active:bg-west-side-500 size-10 text-2xl rounded-lg flex items-center justify-center
                                                     duration-150'>
                                         <FontAwesomeIcon icon={faPlus} />
@@ -184,30 +184,30 @@ export default function Profile() {
                         <div className="grid gap-4 p-5 h-full
                                         grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
 
-                            {userRole === 'CLIENT' && client.bookings && client.bookings.length > 0 ? (
-                                [...client.bookings]
+                            {userRole === 'CLIENT' && user.visits && user.visits.length > 0 ? (
+                                [...user.visits]
                                     .sort((a: any, b: any) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime())
-                                    .map((booking: any, index: number) => (
+                                    .map((visit: any, index: number) => (
                                         <div
                                             key={index}
                                             className="p-2 rounded-lg shadow-sm hover:shadow-md border-1 border-stone-900/10 bg-stone-100 transition-shadow flex flex-col justify-between gap-5 h-fit">
                                             <div>
-                                                <h2 className="text-xl font-semibold text-stone-800">{booking.space?.name}</h2>
-                                                <p className="text-sm text-stone-600">{booking.space?.address?.city}, {booking.space?.address?.country}</p>
+                                                <h2 className="text-xl font-semibold text-stone-800">{visit.collectionPoint?.name}</h2>
+                                                <p className="text-sm text-stone-600">{visit.collectionPoint?.address?.city}, {visit.collectionPoint?.address?.country}</p>
                                             </div>
                                             <div className={`flex gap-2 justify-between`}>
                                                 <button className="aspect-square flex justify-center items-center size-8 text-sm border-1 border-stone-900/10 bg-stone-100 hover:bg-red-500 active:bg-red-500 hover:text-stone-100 active:text-stone-100 transition rounded-sm shadow-sm"
-                                                    onClick={() => handleBookingDelete(booking.id)}>
+                                                    onClick={() => handleBookingDelete(visit.id)}>
                                                     <FontAwesomeIcon icon={faTrashCan} />
                                                 </button>
                                                 <div className='px-2 h-8 flex justify-center items-center rounded-sm font-bold text-center overflow-hidden bg-west-side-200 border-1 border-west-side-300 text-west-side-900'>
-                                                    {new Date(booking.bookingDate).toLocaleDateString('en-GB', {
+                                                    {new Date(visit.bookingDate).toLocaleDateString('en-GB', {
                                                         day: '2-digit',
                                                         month: '2-digit',
                                                         year: 'numeric'
                                                     })}
                                                 </div>
-                                                <Link href={`/spaces/${booking.space.id}`}>
+                                                <Link href={`/collectionPoints/${visit.collectionPoint.id}`}>
                                                     <button className="aspect-square flex justify-center items-center size-8 text-sm border-1 border-stone-900/10 bg-stone-100 hover:bg-stone-900 active:bg-stone-900 hover:text-stone-100 active:text-stone-100 transition rounded-sm shadow-sm">
                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                     </button>
@@ -215,29 +215,29 @@ export default function Profile() {
                                             </div>
                                         </div>
                                     ))
-                            ) : userRole === 'AGENCY' && agency.spaces && agency.spaces.length > 0 ? (
-                                agency.spaces.map((space: any, index: number) => (
+                            ) : userRole === 'AGENCY' && operator.collectionPoints && operator.collectionPoints.length > 0 ? (
+                                operator.collectionPoints.map((collectionPoint: any, index: number) => (
                                     <div
                                         key={index}
                                         className="p-2 rounded-lg shadow-sm hover:shadow-md border-1 border-stone-900/10 bg-stone-100 transition-shadow flex flex-col justify-between gap-5 h-fit">
                                         <div>
-                                            <h2 className="text-xl font-semibold text-stone-800">{space.name}</h2>
-                                            <p className="text-sm text-stone-600">{space.address?.city}, {space.address?.country}</p>
+                                            <h2 className="text-xl font-semibold text-stone-800">{collectionPoint.name}</h2>
+                                            <p className="text-sm text-stone-600">{collectionPoint.address?.city}, {collectionPoint.address?.country}</p>
                                         </div>
                                         <div className="flex justify-between items-end">
                                             <button className="aspect-square flex justify-center items-center size-8 text-sm border-1 border-stone-900/10 bg-stone-100 hover:bg-red-500 active:bg-red-500 hover:text-stone-100 active:text-stone-100 transition rounded-sm shadow-sm"
-                                                onClick={() => handleSpaceDelete(space.id)}>
+                                                onClick={() => handleSpaceDelete(collectionPoint.id)}>
                                                 <FontAwesomeIcon icon={faTrashCan} />
                                             </button>
                                             <div className='flex gap-2'>
                                                 <button onClick={() => {
                                                     setEditSpaceModalOpen(true);
-                                                    setSelectedSpace(space.id);
+                                                    setSelectedSpace(collectionPoint.id);
                                                 }}
                                                     className="aspect-square flex justify-center items-center size-8 text-sm border-1 border-stone-900/10 bg-stone-100 hover:bg-stone-900 active:bg-stone-900 hover:text-stone-100 active:text-stone-100 transition rounded-sm shadow-sm">
                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                 </button>
-                                                <Link href={`/spaces/${space.id}`}>
+                                                <Link href={`/collectionPoints/${collectionPoint.id}`}>
                                                     <button className="aspect-square flex justify-center items-center size-8 text-sm border-1 border-stone-900/10 bg-stone-100 hover:bg-stone-900 active:bg-stone-900 hover:text-stone-100 active:text-stone-100 transition rounded-sm shadow-sm">
                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                     </button>
@@ -248,7 +248,7 @@ export default function Profile() {
                                 ))
                             ) : (
                                 <p className="text-center text-balance text-stone-600 col-span-full">
-                                    {userRole === 'CLIENT' ? 'No bookings found.' : 'No spaces found.'}
+                                    {userRole === 'CLIENT' ? 'No visits found.' : 'No collectionPoints found.'}
                                 </p>
                             )}
                         </div>
@@ -259,7 +259,7 @@ export default function Profile() {
             <EditProfileModal
                 isOpen={isEditProfileModalOpen}
                 onClose={() => setEditProfileModalOpen(false)}
-                userData={userRole === 'CLIENT' ? client : agency} // Pass the appropriate user data based on role
+                userData={userRole === 'CLIENT' ? user : operator} // Pass the appropriate user data based on role
                 userRole={userRole}
                 onSubmitComplete={async (status) => {
                     if (status === 200) {
@@ -273,27 +273,27 @@ export default function Profile() {
             <CreateSpaceModal
                 isOpen={isCreateSpaceModalOpen}
                 onClose={() => setCreateSpaceModalOpen(false)}
-                userId={agency.userId}
+                userId={operator.userId}
                 onSubmitComplete={async (status) => {
                     if (status === 201) {
-                        await fetchUserData(); // Refresh spaces after successful submission
-                        toast.success('Space created successfully!');
+                        await fetchUserData(); // Refresh collectionPoints after successful submission
+                        toast.success('CollectionPoint created successfully!');
                     } else
-                        toast.error('Failed to create space. Please try again.');
+                        toast.error('Failed to create collectionPoint. Please try again.');
                     setCreateSpaceModalOpen(false);
                 }}
             />
             <EditSpaceModal
                 isOpen={isEditSpaceModalOpen}
                 onClose={() => setEditSpaceModalOpen(false)}
-                userId={agency.userId}
+                userId={operator.userId}
                 spaceId={selectedSpace}
                 onSubmitComplete={async (status) => {
                     if (status === 200) {
-                        await fetchUserData(); // Refresh spaces after successful submission
-                        toast.success('Space updated successfully!');
+                        await fetchUserData(); // Refresh collectionPoints after successful submission
+                        toast.success('CollectionPoint updated successfully!');
                     } else
-                        toast.error('Failed to update space. Please try again.');
+                        toast.error('Failed to update collectionPoint. Please try again.');
                     setEditSpaceModalOpen(false);
                 }}
             />
@@ -302,7 +302,7 @@ export default function Profile() {
 };
 
 // Render different content based on user role
-//     if (userRole === 'CLIENT' && client) {
+//     if (userRole === 'CLIENT' && user) {
 //         return (
 //             <div id='profile' className={`px-5 sm:px-10 md:px-15 lg:px-20`}>
 //                 <section className={`w-full min-h-screen  lg:h-screen pt-28 pb-3`}>
@@ -317,9 +317,9 @@ export default function Profile() {
 //                                 <FontAwesomeIcon icon={faUser} className="text-stone-600 w-2/3 h-2/3 text-[5rem] lg:text-[8rem]" />
 //                             </div>
 //                             <div className='flex flex-col gap-3'>
-//                                 <h1 className="text-3xl lg:text-2xl xl:text-3xl font-bold text-stone-800"> {client?.name} {client?.surname} </h1>
+//                                 <h1 className="text-3xl lg:text-2xl xl:text-3xl font-bold text-stone-800"> {user?.name} {user?.surname} </h1>
 //                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{userEmail}</p>
-//                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{client?.cellphone}</p>
+//                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{user?.cellphone}</p>
 //                             </div>
 //                         </div>
 
@@ -329,18 +329,18 @@ export default function Profile() {
 //                             <div className="grid gap-4 p-4 h-full lg:h-full lg:overflow-y-scroll
 //                                         grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
 
-//                                 {client.bookings && client.bookings.length > 0 ? (
-//                                     client.bookings?.map((booking: any, index: number) => (
+//                                 {user.visits && user.visits.length > 0 ? (
+//                                     user.visits?.map((visit: any, index: number) => (
 //                                         <div
 //                                             key={index} // Add a unique key for each child
 //                                             className="p-2 rounded-lg shadow-sm hover:shadow-md border-1 border-stone-900/10 bg-stone-100 transition-shadow flex flex-col justify-between gap-5 h-fit">
 //                                             <div>
-//                                                 <h2 className="text-xl font-semibold text-stone-800">{booking.space.name}</h2>
-//                                                 <p className="text-sm text-stone-600">{booking?.space.address.city}, {booking?.space.address.country}</p>
+//                                                 <h2 className="text-xl font-semibold text-stone-800">{visit.collectionPoint.name}</h2>
+//                                                 <p className="text-sm text-stone-600">{visit?.collectionPoint.address.city}, {visit?.collectionPoint.address.country}</p>
 //                                             </div>
 //                                             <div className="flex justify-between gap-4">
 //                                                 <div className='aspect-square w-full h-8 flex justify-center items-center rounded-sm font-bold text-sm md:text-xs lg:text-sm text-center overflow-hidden bg-west-side-200 border-1 border-west-side-300 text-west-side-900'>
-//                                                     {new Date(booking.bookingDate).toLocaleDateString('en-GB', {
+//                                                     {new Date(visit.bookingDate).toLocaleDateString('en-GB', {
 //                                                         day: '2-digit',
 //                                                         month: '2-digit',
 //                                                         year: 'numeric'
@@ -350,12 +350,12 @@ export default function Profile() {
 //                                                 <div className='flex gap-2 items-end'>
 //                                                     <button className="aspect-square flex justify-center items-center size-8 bg-stone-100 hover:bg-red-500 active:bg-red-500 hover:text-stone-100 active:text-stone-100 transition rounded-lg shadow-sm
 //                                                                 text-sm xl:text-base"
-//                                                         onClick={() => handleBookingDelete(booking.id)}>
+//                                                         onClick={() => handleBookingDelete(visit.id)}>
 //                                                         <FontAwesomeIcon icon={faTrashCan} />
 //                                                     </button>
 //                                                     <button className="aspect-square flex justify-center items-center size-8 bg-stone-100 hover:bg-stone-900 active:bg-stone-900 hover:text-stone-100 active:text-stone-100 transition rounded-lg shadow-sm
 //                                                                 text-sm xl:text-base"
-//                                                         onClick={() => window.open(`/spaces/${booking.space.id}`, '_blank')}>
+//                                                         onClick={() => window.open(`/collectionPoints/${visit.collectionPoint.id}`, '_blank')}>
 //                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
 //                                                     </button>
 //                                                 </div>
@@ -364,7 +364,7 @@ export default function Profile() {
 //                                     ))
 //                                 ) : (
 //                                     <div className="w-full h-full flex items-center justify-center text-stone-600">
-//                                         <p className="text-xl">No bookings found.</p>
+//                                         <p className="text-xl">No visits found.</p>
 //                                     </div>
 //                                 )}
 //                             </div>
@@ -374,7 +374,7 @@ export default function Profile() {
 //             </div >
 //         );
 //     }
-//     else if (userRole === 'AGENCY' && agency) {
+//     else if (userRole === 'AGENCY' && operator) {
 //         return (
 //             <div id='profile' className={`px-5 sm:px-10 md:px-15 lg:px-20`}>
 //                 <section className={`w-full min-h-screen  lg:h-screen pt-28 pb-3`}>
@@ -389,17 +389,17 @@ export default function Profile() {
 //                                 <FontAwesomeIcon icon={faUser} className="text-stone-600 w-2/3 h-2/3 text-[5rem] lg:text-[8rem]" />
 //                             </div>
 //                             <div className='flex flex-col gap-3'>
-//                                 <h1 className="text-3xl lg:text-2xl xl:text-3xl font-bold text-stone-800"> {agency?.name}</h1>
+//                                 <h1 className="text-3xl lg:text-2xl xl:text-3xl font-bold text-stone-800"> {operator?.name}</h1>
 //                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{userEmail}</p>
-//                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{agency?.vatNumber} {agency?.telephone}</p>
+//                                 <p className="text-lg lg:text-base xl:text-lg text-stone-600">{operator?.vatNumber} {operator?.telephone}</p>
 //                             </div>
 
-//                             {/* Publish Space Button */}
+//                             {/* Publish CollectionPoint Button */}
 //                             <button
 //                                 onClick={() => setModalOpen(true)}
 //                                 className='mt-auto ml-auto flex justify-end items-center rounded-xl bg-west-side-500 text-stone-100 transition-all duration-150
 //                                            w-12 hover:w-44 active:w-44 ease-out active:scale-90 hover:scale-110 origin-right delay-1000 hover:delay-0 active:delay-0'>
-//                                 <p className='whitespace-nowrap text-xl text-right w-full'>Publish space</p>
+//                                 <p className='whitespace-nowrap text-xl text-right w-full'>Publish collectionPoint</p>
 //                                 <div className='aspect-square bg-west-side-500 size-12 text-2xl rounded-xl flex items-center justify-center'>
 //                                     <FontAwesomeIcon icon={faPlus} />
 //                                 </div>
@@ -411,25 +411,25 @@ export default function Profile() {
 //                                     w-full lg:w-4/5`}>
 //                             <div className="grid gap-4 p-4 h-full lg:h-full lg:overflow-y-scroll
 //                                         grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-//                                 {agency.spaces && agency.spaces.length > 0 ? (
-//                                     agency.spaces?.map((space: any, index: number) => (
+//                                 {operator.collectionPoints && operator.collectionPoints.length > 0 ? (
+//                                     operator.collectionPoints?.map((collectionPoint: any, index: number) => (
 //                                         <div
 //                                             key={index} // Add a unique key for each child
 //                                             className="p-2 rounded-lg shadow-sm hover:shadow-md border-1 border-stone-900/10 bg-stone-100 transition-shadow flex flex-col justify-between gap-5 h-fit">
 //                                             <div>
-//                                                 <h2 className="text-xl font-semibold text-stone-800">{space.name}</h2>
-//                                                 <p className="text-sm text-stone-600">{space.address.city}, {space.address.country}</p>
+//                                                 <h2 className="text-xl font-semibold text-stone-800">{collectionPoint.name}</h2>
+//                                                 <p className="text-sm text-stone-600">{collectionPoint.address.city}, {collectionPoint.address.country}</p>
 //                                             </div>
 //                                             <div className="flex justify-between gap-4">
 //                                                 <div className='flex gap-2 items-end'>
 //                                                     <button className="aspect-square flex justify-center items-center size-8 bg-stone-100 hover:bg-red-500 active:bg-red-500 hover:text-stone-100 active:text-stone-100 transition rounded-lg shadow-sm
 //                                                                 text-sm xl:text-base"
-//                                                         onClick={() => handleSpaceDelete(space.id)}>
+//                                                         onClick={() => handleSpaceDelete(collectionPoint.id)}>
 //                                                         <FontAwesomeIcon icon={faTrashCan} />
 //                                                     </button>
 //                                                     <button className="aspect-square flex justify-center items-center size-8 bg-stone-100 hover:bg-stone-900 active:bg-stone-900 hover:text-stone-100 active:text-stone-100 transition rounded-lg shadow-sm
 //                                                                 text-sm xl:text-base"
-//                                                         onClick={() => window.open(`/spaces/${space.id}`, '_blank')}>
+//                                                         onClick={() => window.open(`/collectionPoints/${collectionPoint.id}`, '_blank')}>
 //                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
 //                                                     </button>
 //                                                 </div>
@@ -438,7 +438,7 @@ export default function Profile() {
 //                                     ))
 //                                 ) : (
 //                                     <div className="w-full h-full flex items-center justify-center text-stone-600">
-//                                         <p className="text-xl">No spaces found.</p>
+//                                         <p className="text-xl">No collectionPoints found.</p>
 //                                     </div>
 //                                 )}
 //                             </div>
@@ -452,11 +452,11 @@ export default function Profile() {
 //                     onClose={() => setModalOpen(false)}
 //                     onSubmitComplete={async (status) => {
 //                         if (status === 201)
-//                             console.log('Space created successfully!');
-//                         await fetchUserData(); // Refresh spaces after successful submission
+//                             console.log('CollectionPoint created successfully!');
+//                         await fetchUserData(); // Refresh collectionPoints after successful submission
 //                         setModalOpen(false);
 //                     }}
-//                     userId={agency.userId}
+//                     userId={operator.userId}
 //                 />
 
 //             </div >

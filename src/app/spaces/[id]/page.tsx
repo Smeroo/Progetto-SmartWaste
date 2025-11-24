@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState, use } from 'react';
 import { useSession } from 'next-auth/react';
@@ -16,7 +16,7 @@ library.add(
     faVideoCamera, faKitchenSet, faChild, faDog, faParking, faLock, faBolt
 );
 
-type Space = {
+type CollectionPoint = {
     id: string;
     name: string;
     description: string;
@@ -36,7 +36,7 @@ type Space = {
         longitude: number;
     };
     services?: { id: number; detail: string; iconName: IconName }[];
-    bookings?: { id: number; date: string }[];
+    visits?: { id: number; date: string }[];
     reviews?: { id: number; rating: number; comment: string }[];
 };
 
@@ -65,22 +65,22 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
         }
         // selectedDates will be updated automatically by handleDateSelection
     };
-    // Extracting the space ID from the URL parameters
+    // Extracting the collectionPoint ID from the URL parameters
     const { id } = use(params);
     // Using NextAuth to get the session data
     const { data: session, status } = useSession();
-    // State variables to manage space data, loading state, review text, hover rating, and booking dates
-    const [space, setSpace] = useState<Space | null>(null); // Stores the space details
+    // State variables to manage collectionPoint data, loading state, review text, hover rating, and visit dates
+    const [collectionPoint, setSpace] = useState<CollectionPoint | null>(null); // Stores the collectionPoint details
     const [loading, setLoading] = useState(true); // Loading state for data fetch
     const [reviewText, setReviewText] = useState(''); // Stores the review text input
     const [hoverRating, setHoverRating] = useState(0); // Stores the current hover rating for stars
     const [hasReviewed, setHasReviewed] = useState(false); // Tracks if the user has already reviewed
     const [selectedRating, setSelectedRating] = useState(0); // Stores the selected star rating
     const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set()); // Stores selected dates in DD/MM/YYYY
-    const [bookingDates, setBookingDates] = useState<Set<string>>(new Set()); // Stores booking dates in YYYY-MM-DD
+    const [bookingDates, setBookingDates] = useState<Set<string>>(new Set()); // Stores visit dates in YYYY-MM-DD
     const [userReview, setUserReview] = useState<{ id: string; rating: number; comment: string } | null>(null); // Stores the user's review if present
 
-    // Placeholder images in case the space does not have any images
+    // Placeholder images in case the collectionPoint does not have any images
     const placeholderImages = [
         '/placeholder-image.jpg'
     ];
@@ -89,21 +89,21 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
     const formatTypology = (typology: string) => {
         return typology
             .toLowerCase()
-            .replace(/_/g, ' ') // Replace underscores with spaces
+            .replace(/_/g, ' ') // Replace underscores with collectionPoints
             .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
     };
 
-    // Function to load space data and reviews from the API
+    // Function to load collectionPoint data and reviews from the API
     async function loadData() {
         try {
-            const spaceRes = await fetch(`/api/spaces/${id}`);
+            const spaceRes = await fetch(`/api/collectionPoints/${id}`);
             if (!spaceRes.ok) {
                 setSpace(null);
                 return;
             }
             const spaceData = await spaceRes.json();
             setSpace(spaceData);
-            // Check if the user has already reviewed the space
+            // Check if the user has already reviewed the collectionPoint
             if (session?.user?.role === 'CLIENT' && spaceData.reviews) {
                 const userReview = spaceData.reviews.find((review: any) => review.clientId === session.user.id);
                 setUserReview(userReview || null);
@@ -132,7 +132,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    spaceId: space?.id,
+                    spaceId: collectionPoint?.id,
                     clientId: session?.user.id,
                     rating: selectedRating,
                     comment: reviewText,
@@ -151,34 +151,34 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
         }
     }
 
-    // Function to handle booking submission
+    // Function to handle visit submission
     const handleBooking = async () => {
         if (selectedDates.size === 0) {
             toast.error("Please select at least one date to book.");
             return;
         }
         try {
-            const res = await fetch('/api/bookings', {
+            const res = await fetch('/api/visits', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     bookingDates: Array.from(bookingDates),
-                    spaceId: space?.id,
+                    spaceId: collectionPoint?.id,
                     clientId: session?.user.id,
                 }),
             });
             if (!res.ok) {
-                throw new Error('Failed to book space');
+                throw new Error('Failed to book collectionPoint');
             }
-            // Reset selected dates after booking
+            // Reset selected dates after visit
             setSelectedDates(new Set());
-            toast.success("Booking successful!");
+            toast.success("Visit successful!");
         }
         catch (error) {
-            console.error("Error in POST fetch for booking:", error);
-            toast.error("An error occurred while booking the space. Please try again later.");
+            console.error("Error in POST fetch for visit:", error);
+            toast.error("An error occurred while visit the collectionPoint. Please try again later.");
         }
     }
 
@@ -199,10 +199,10 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
         }
     };
 
-    // Function to scroll to the booking section
+    // Function to scroll to the visit section
     const handleScrollToBooking = () => {
         if (typeof window !== "undefined") {
-            const targetId = "booking-section";
+            const targetId = "visit-section";
             const targetElement = document.getElementById(targetId);
             if (targetElement) {
                 const isSmallScreen = window.innerWidth < 640; // sm breakpoint in Tailwind
@@ -229,9 +229,9 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
     if (loading) return (<div className="h-screen text-6xl flex justify-center items-center text-stone-600">
         <FontAwesomeIcon icon={faSpinner} className='animate-spin' />
     </div>);
-    // Show error message if space is not found
-    if (!space) return (<p className="h-screen text-2xl flex justify-center items-center text-stone-600">
-        Space not found. Please check the ID or try again later.
+    // Show error message if collectionPoint is not found
+    if (!collectionPoint) return (<p className="h-screen text-2xl flex justify-center items-center text-stone-600">
+        CollectionPoint not found. Please check the ID or try again later.
     </p>);
 
     // Function to delete the user's review
@@ -253,12 +253,12 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
     return (
         <div id='spazioNelDettaglio' className={`px-5 sm:px-10 md:px-15 lg:px-20`}>
             <section className={`w-full min-h-screen flex flex-col gap-5 pt-28`}>
-                {/* Space Wrapper */}
+                {/* CollectionPoint Wrapper */}
                 <div className={`w-full xl:min-h-[81vh] grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-5 gap-5`}>
 
                     {/* Carousel */}
                     <div className={`col-span-1 row-span-3 w-full h-full min-h-36 sm:min-h-56 md:min-h-72 rounded-2xl overflow-hidden shadow-sm`}>
-                        <Carousel images={space.images || placeholderImages} autoPlay={true} autoPlayInterval={10000} buttonSize="size-12" dotSize="size-3" chevronSize='text-xl' />
+                        <Carousel images={collectionPoint.images || placeholderImages} autoPlay={true} autoPlayInterval={10000} buttonSize="size-12" dotSize="size-3" chevronSize='text-xl' />
                     </div>
 
                     {/* Info Section */}
@@ -268,19 +268,19 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                             <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:justify-between sm:items-start">
                                 {/* Title and Location */}
                                 <div className="flex flex-col gap-2">
-                                    <h1 className='font-bold text-2xl sm:text-4xl'>{space.name}</h1>
+                                    <h1 className='font-bold text-2xl sm:text-4xl'>{collectionPoint.name}</h1>
                                     <p className='text-sm sm:text-lg text-stone-600'>
-                                        {space.address?.number != null ? `${space.address?.street}, ${space.address.number} - ` : `${space.address?.street} - `}
-                                        {space.address?.city}, {space.address?.country}
+                                        {collectionPoint.address?.number != null ? `${collectionPoint.address?.street}, ${collectionPoint.address.number} - ` : `${collectionPoint.address?.street} - `}
+                                        {collectionPoint.address?.city}, {collectionPoint.address?.country}
                                     </p>
                                 </div>
                                 {/* Media delle Reviews */}
                                 <div className='flex text-lg sm:text-2xl text-yellow-400'>
                                     {Array.from({ length: 5 }).map((_, index) => {
                                         const starValue = index + 1;
-                                        if (space.avgRating && space.avgRating >= starValue) {
+                                        if (collectionPoint.avgRating && collectionPoint.avgRating >= starValue) {
                                             return <FontAwesomeIcon key={index} icon={faStar} />;
-                                        } else if (space.avgRating && space.avgRating >= starValue - 0.5) {
+                                        } else if (collectionPoint.avgRating && collectionPoint.avgRating >= starValue - 0.5) {
                                             return <FontAwesomeIcon key={index} icon={faStarHalfStroke} />;
                                         } else {
                                             return <FontAwesomeIcon key={index} icon={faHollowStar} />;
@@ -293,9 +293,9 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                                 {/* SpaceType */}
                                 <div className='flex justify-center items-center px-3 py-1 max-h-10 text-xs sm:text-sm font-medium rounded-md bg-west-side-200 border-1 border-west-side-300 hover:border-west-side-900 text-west-side-900 transition duration-500 hover:duration-150 delay-250 hover:delay-0'>
                                     <FontAwesomeIcon icon={faBuilding} className="mr-2" />
-                                    {formatTypology(space.typology)}
+                                    {formatTypology(collectionPoint.typology)}
                                 </div>
-                                {space.services?.map((service, index) => {
+                                {collectionPoint.services?.map((service, index) => {
                                     const iconDefinition = findIconDefinition({ iconName: service.iconName, prefix: 'fas' });
                                     return (
                                         <div
@@ -308,24 +308,24 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                                 })}
                             </div>
                             {/* Description */}
-                            <p className='text-xs sm:text-base'>{space.description}</p>
+                            <p className='text-xs sm:text-base'>{collectionPoint.description}</p>
                         </div>
                         <div className='flex justify-between items-center gap-5'>
-                            {/* To booking section */}
+                            {/* To visit section */}
                             {session?.user.role === 'CLIENT' && (
                                 <button type="button" onClick={handleScrollToBooking}
                                     className="flex justify-center items-center text-xs sm:text-base gap-1 origin-bottom-left h-12 px-4 border-2 border-west-side-500 hover:bg-west-side-500 active:bg-west-side-500 text-west-side-500 hover:text-stone-100 active:text-stone-100 font-bold rounded-lg hover:scale-110 active:scale-90 transition-all duration-150 ease-out overflow-hidden group">
                                     <span className="hidden sm:block -translate-y-8 group-hover:translate-y-0 group-active:translate-y-0 transition">
                                         <FontAwesomeIcon icon={faLongArrowAltDown} />
                                     </span>
-                                    <p>Proceed to Booking</p>
+                                    <p>Proceed to Visit</p>
                                     <span className="hidden sm:block -translate-y-8 group-hover:translate-y-0 group-active:translate-y-0 transition">
                                         <FontAwesomeIcon icon={faLongArrowAltDown} />
                                     </span>
                                 </button>
                             )}
                             {/* Price */}
-                            <p className='flex font-bold text-xl sm:text-3xl'>{space.price}€<span className='text-sm sm:text-lg align-super'>/day</span></p>
+                            <p className='flex font-bold text-xl sm:text-3xl'>{collectionPoint.price}€<span className='text-sm sm:text-lg align-super'>/day</span></p>
                         </div>
                     </div>
 
@@ -364,8 +364,8 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
 
                                 {/* Other Reviews */}
                                 <div className='w-full flex flex-col overflow-y-auto gap-2 h-full divide-y-1 divide-stone-900/10'>
-                                    {space.reviews && space.reviews.length > 0 ? (
-                                        space.reviews
+                                    {collectionPoint.reviews && collectionPoint.reviews.length > 0 ? (
+                                        collectionPoint.reviews
                                             .filter((review: any) => review.clientId !== session?.user?.id)
                                             .map((review) => (
                                                 <div key={review.id} className='w-full flex flex-col gap-2 pb-1'>
@@ -429,9 +429,9 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                 </div >
 
-                {/* Booking Section */}
+                {/* Visit Section */}
                 {session?.user.role === 'CLIENT' && (
-                    <div id='booking-section' className={`col-span-1 md:col-span-2 row-span-1 pb-5 w-full h-full`}>
+                    <div id='visit-section' className={`col-span-1 md:col-span-2 row-span-1 pb-5 w-full h-full`}>
                         <div className='rounded-2xl bg-stone-100 border-1 border-stone-900/10 shadow-sm relative'>
                             {/* Recap */}
                             <div className='w-full h-fit mt-auto p-5 rounded-lg flex flex-col sm:flex-row gap-10 transition duration-500'>
@@ -441,7 +441,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                                         onDateSelection={handleDateSelection}
                                         selectedDates={bookingDates}
                                         setSelectedDates={setBookingDates}
-                                        spaceId={space.id}
+                                        spaceId={collectionPoint.id}
                                     />
                                 </div>
                                 {/* Recap Info */}
@@ -488,7 +488,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                                         {/* Normal Price */}
                                         <div className="flex flex-col items-center gap-2">
                                             <p className='text-sm md:text-lg'>Daily price</p>
-                                            <p className="flex font-bold text-xl md:text-3xl">{space.price}€<span className="text-sm md:text-lg align-super">/day</span></p>
+                                            <p className="flex font-bold text-xl md:text-3xl">{collectionPoint.price}€<span className="text-sm md:text-lg align-super">/day</span></p>
                                         </div>
 
                                         {/* Divider */}
@@ -499,7 +499,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                                         {/* Dynamic Price */}
                                         <div className="flex flex-col items-center gap-2">
                                             <p className='text-sm md:text-lg'>Total for {selectedDates.size === 1 ? '1 day' : `${selectedDates.size} days`}</p>
-                                            <p className="flex font-bold text-xl md:text-3xl">{selectedDates.size > 0 ? space.price * selectedDates.size : 0}€</p>
+                                            <p className="flex font-bold text-xl md:text-3xl">{selectedDates.size > 0 ? collectionPoint.price * selectedDates.size : 0}€</p>
                                         </div>
                                     </div>
                                 </div>

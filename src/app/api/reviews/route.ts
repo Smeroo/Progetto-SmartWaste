@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { updateSpaceAvgRating } from '@/lib/reviewUtils';
 
 // Handles GET requests to /api/reviews?spaceId
-// Returns all reviews for a space
+// Returns all reviews for a collectionPoint
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const spaceId = searchParams.get('spaceId');
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        // Get all reviews for the specified space
+        // Get all reviews for the specified collectionPoint
         const reviews = await prisma.review.findMany({
             where: { spaceId: parseInt(spaceId) },
         });
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
             },
         });
 
-        // Update the average rating for the space
+        // Update the average rating for the collectionPoint
         await updateSpaceAvgRating(newReview.spaceId);
 
         return NextResponse.json(newReview, { status: 201 });

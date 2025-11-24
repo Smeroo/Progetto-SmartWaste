@@ -19,8 +19,8 @@ export async function updateSpaceAvgRating(spaceId: number): Promise<void> {
             // Round to 1 decimal place
             const roundedAverage = Math.round(averageRating * 10) / 10;
 
-            // Update the space with the new average
-            await prisma.space.update({
+            // Update the collectionPoint with the new average
+            await prisma.collectionPoint.update({
                 where: { id: spaceId },
                 data: {
                     avgRating: roundedAverage,
@@ -28,7 +28,7 @@ export async function updateSpaceAvgRating(spaceId: number): Promise<void> {
             });
         } else {
             // If there are no reviews, set the average to null
-            await prisma.space.update({
+            await prisma.collectionPoint.update({
                 where: { id: spaceId },
                 data: {
                     avgRating: null,
@@ -36,7 +36,7 @@ export async function updateSpaceAvgRating(spaceId: number): Promise<void> {
             });
         }
     } catch (error) {
-        console.error(`Error updating average rating for space ${spaceId}:`, error);
+        console.error(`Error updating average rating for collectionPoint ${spaceId}:`, error);
         throw error; // Rethrow the error to handle it in the caller
     }
 }

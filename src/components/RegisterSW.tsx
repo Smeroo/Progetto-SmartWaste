@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useEffect } from 'react';
 
 // RegisterSW registers the service worker for PWA/offline support

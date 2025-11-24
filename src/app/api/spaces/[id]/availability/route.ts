@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getMonthlyAvailability } from "@/lib/spaceAvailability";
 
-// Handles GET requests to /api/spaces/[id]/availability?year=YYYY&month=MM
-// Returns the available dates for a specific space in a given month and year
+// Handles GET requests to /api/collectionPoints/[id]/availability?year=YYYY&month=MM
+// Returns the available dates for a specific collectionPoint in a given month and year
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
   const year = parseInt(request.nextUrl.searchParams.get("year") || "");
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 
   if (!id || isNaN(parseInt(id))) {
-    return NextResponse.json({ error: 'Invalid or missing space ID' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid or missing collectionPoint ID' }, { status: 400 });
   }
 
   const spaceId = parseInt(id);
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const availableDates = await getMonthlyAvailability(spaceId, year, month);
 
   if (!availableDates) {
-    return NextResponse.json({ error: "Space not found" }, { status: 404 });
+    return NextResponse.json({ error: "CollectionPoint not found" }, { status: 404 });
   }
 
   return NextResponse.json({ availableDates });

@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-// Handles DELETE request to /api/bookings/[id]
-// Deletes a booking by ID
+// Handles DELETE request to /api/visits/[id]
+// Deletes a visit by ID
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
     try {
         // Check if the user is authenticated
@@ -18,18 +18,18 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
         const bookingId = parseInt(id);
 
         if (!bookingId) {
-            throw new Error("Booking ID is required to delete a booking.");
+            throw new Error("Visit ID is required to delete a visit.");
         }
 
-        // Delete the booking from the database
-        const booking = await prisma.booking.delete({
+        // Delete the visit from the database
+        const visit = await prisma.visit.delete({
             where: { id: bookingId }
         });
 
-        return NextResponse.json({ message: "Booking deleted successfully" });
+        return NextResponse.json({ message: "Visit deleted successfully" });
     }
     catch (error) {
-        console.error("Error deleting booking:", error);
-        return NextResponse.json({ error: 'Error deleting booking' + error }, { status: 500 });
+        console.error("Error deleting visit:", error);
+        return NextResponse.json({ error: 'Error deleting visit' + error }, { status: 500 });
     }
 }
