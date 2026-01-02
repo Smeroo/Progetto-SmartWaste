@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { deleteCollectionPoint } from '@/services/collectionPointService';
 
 // Disable body parsing for this route
 // This is necessary to handle file uploads correctly
@@ -213,36 +214,31 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
-        // Verify that the collection point exists and belongs to the user
-        const collectionPoint = await prisma.collectionPoint.findUnique({
-            where: { id: spaceId },
-            select: { operatorId: true }
-        });
-
-        if (!collectionPoint) {
-            return NextResponse.json({ error: 'Collection point not found' }, { status: 404 });
-        }
-
-        if (collectionPoint.operatorId !== session.user.id) {
-            return NextResponse.json({ error: 'Not authorized to delete this resource' }, { status: 403 });
-        }
-
-        // Delete the collectionPoint from the database
-        await prisma.collectionPoint.delete({
-            where: { id: spaceId },
-        });
-
-        const folderPath = path.join(process.cwd(), 'public', 'uploads', `collectionPoint${id}`);
-
-        // Attempt to delete the folder containing the collectionPoint's images
+        // Use service layer to delete the collection point with ownership verification
         try {
-            await fs.rm(folderPath, { recursive: true, force: true });
-        } catch (fsError) {
-            console.error('Failed to delete folder:', fsError);
+            await deleteCollectionPoint(spaceId, session.user.id);
+            
+            // Handle filesystem cleanup (infrastructure concern, remains in controller)
+            const folderPath = path.join(process.cwd(), 'public', 'uploads', `collectionPoint${id}`);
+            try {
+                await fs.rm(folderPath, { recursive: true, force: true });
+            } catch (fsError) {
+                console.error('Failed to delete folder:', fsError);
+            }
+            
+            return new NextResponse(null, { status: 204 });
+        } catch (error) {
+            if (error instanceof Error) {
+                if (error.message === 'Collection point not found') {
+                    return NextResponse.json({ error: error.message }, { status: 404 });
+                }
+                if (error.message === 'Not authorized to delete this resource') {
+                    return NextResponse.json({ error: error.message }, { status: 403 });
+                }
+            }
+            return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
         }
-
-        return new NextResponse(null, { status: 204 });
     } catch (error) {
-        return NextResponse.json({ error: 'Delete failed' + error }, { status: 500 });
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
     }
 }
