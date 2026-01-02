@@ -219,7 +219,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             await deleteCollectionPoint(spaceId, session.user.id);
             
             // Handle filesystem cleanup (infrastructure concern, remains in controller)
-            const folderPath = path.join(process.cwd(), 'public', 'uploads', `collectionPoint${id}`);
+            const folderPath = path.join(process.cwd(), 'public', 'uploads', `collectionPoint${spaceId}`);
             try {
                 await fs.rm(folderPath, { recursive: true, force: true });
             } catch (fsError) {
