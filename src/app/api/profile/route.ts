@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
-import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { getUserProfile, updateUserProfile, deleteUserAccount } from '@/services/userService'
 
 // Handles GET requests to /api/profile
 export async function GET() {
@@ -11,29 +11,14 @@ export async function GET() {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
 
-    // Fetch user by email
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
+    const user = await getUserProfile(session.user.email);
     return NextResponse.json(user);
 
   } catch (error) {
     console.error("Error fetching profile:", error);
     return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : "Server error" },
+      { status: error instanceof Error && error.message === "User not found" ? 404 : 500 }
     );
   }
 }
@@ -48,21 +33,7 @@ export async function PUT(request: Request) {
     }
 
     const userData = await request.json();
-
-    const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        name: userData.name,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      }
-    });
-
+    const updatedUser = await updateUserProfile(session.user.email, userData);
     return NextResponse.json(updatedUser);
 
   } catch (error) {
@@ -83,10 +54,7 @@ export async function DELETE() {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
 
-    await prisma.user.delete({
-      where: { email: session.user.email }
-    });
-
+    await deleteUserAccount(session.user.email);
     return new NextResponse(null, { status: 204 });
 
   } catch (error) {

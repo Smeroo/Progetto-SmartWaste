@@ -1,33 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
+import {
+  getCollectionPoints,
+  createCollectionPoint,
+  CollectionPointFilters,
+} from '@/services/collectionPointService';
 
 export async function GET(request: NextRequest) {
   try {
-    const collectionPoints = await prisma.collectionPoint.findMany({
-      where: {
-        isActive: true,
-      },
-      include: {
-        address: true,
-        wasteTypes: true,
-        schedule: true,
-        operator: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const searchParams = request.nextUrl.searchParams;
+    
+    const filters: CollectionPointFilters = {
+      typology: searchParams.get('typology') || undefined,
+      maxPrice: searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined,
+      searchQuery: searchParams.get('q') || undefined,
+    };
 
+    const collectionPoints = await getCollectionPoints(filters);
     return NextResponse.json(collectionPoints);
   } catch (error) {
     console.error('Error fetching collection points:', error);
@@ -64,48 +53,15 @@ export async function POST(request: NextRequest) {
       capacity,
     } = body;
 
-    const collectionPoint = await prisma.collectionPoint.create({
-      data: {
-        name,
-        description,
-        operatorId,
-        accessibility,
-        capacity,
-        address: address ? {
-          create: {
-            street: address.street,
-            number: address.number,
-            city: address.city,
-            zip: address.zip,
-            country: address.country || 'Italy',
-            latitude: address.latitude,
-            longitude: address.longitude,
-          },
-        } : undefined,
-        wasteTypes: wasteTypeIds ? {
-          connect: wasteTypeIds.map((id: number) => ({ id })),
-        } : undefined,
-        schedule: schedule ? {
-          create: {
-            monday: schedule.monday || false,
-            tuesday: schedule.tuesday || false,
-            wednesday: schedule.wednesday || false,
-            thursday: schedule.thursday || false,
-            friday: schedule.friday || false,
-            saturday: schedule.saturday || false,
-            sunday: schedule.sunday || false,
-            openingTime: schedule.openingTime,
-            closingTime: schedule.closingTime,
-            notes: schedule.notes,
-            isAlwaysOpen: schedule.isAlwaysOpen || false,
-          },
-        } : undefined,
-      },
-      include: {
-        address: true,
-        wasteTypes: true,
-        schedule: true,
-      },
+    const collectionPoint = await createCollectionPoint({
+      name,
+      description,
+      operatorId,
+      address,
+      wasteTypeIds,
+      schedule,
+      accessibility,
+      capacity,
     });
 
     return NextResponse.json(collectionPoint, { status: 201 });

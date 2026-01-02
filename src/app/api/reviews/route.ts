@@ -1,7 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { updateSpaceAvgRating } from '@/lib/reviewUtils';
+import { getReviewsBySpaceId, createReview } from '@/services/reviewService';
 
 // Handles GET requests to /api/reviews?spaceId
 // Returns all reviews for a collectionPoint
@@ -14,10 +13,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        // Get all reviews for the specified collectionPoint
-        const reviews = await prisma.review.findMany({
-            where: { spaceId: parseInt(spaceId) },
-        });
+        const reviews = await getReviewsBySpaceId(parseInt(spaceId));
         return NextResponse.json(reviews);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
@@ -40,24 +36,18 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { spaceId, clientId, rating, comment } = body;
+        const { spaceId, userId, rating, comment } = body;
 
-        if (!spaceId || !clientId || !rating) {
-            return NextResponse.json({ error: 'spaceId, clientId, and rating are required' }, { status: 400 });
+        if (!spaceId || !userId || !rating) {
+            return NextResponse.json({ error: 'spaceId, userId, and rating are required' }, { status: 400 });
         }
 
-        // Create a new review
-        const newReview = await prisma.review.create({
-            data: {
-                spaceId: parseInt(spaceId),
-                clientId: clientId,
-                rating: parseInt(rating),
-                comment: comment || null,
-            },
+        const newReview = await createReview({
+            spaceId: parseInt(spaceId),
+            userId,
+            rating: parseInt(rating),
+            comment,
         });
-
-        // Update the average rating for the collectionPoint
-        await updateSpaceAvgRating(newReview.spaceId);
 
         return NextResponse.json(newReview, { status: 201 });
     } catch (error) {
